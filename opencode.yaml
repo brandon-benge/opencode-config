@@ -1,0 +1,96 @@
+agents:
+  spec-reviewer:
+    description: Create architecture proposals from SpecRepo requests without implementing code.
+    mode: subagent
+    temperature: 0.1
+    permission:
+      read: allow
+      edit: ask
+      bash:
+        "*": ask
+        "git status*": allow
+        "git diff*": allow
+        "rg *": allow
+        "sed *": allow
+        "find *": allow
+        "wc *": allow
+      webfetch: deny
+      websearch: deny
+      task: deny
+  architecture-approver:
+    description: Review architecture proposals for approval readiness while leaving final approval to a human.
+    mode: subagent
+    temperature: 0.1
+    permission:
+      read: allow
+      edit: ask
+      bash:
+        "*": ask
+        "git status*": allow
+        "git diff*": allow
+        "rg *": allow
+        "sed *": allow
+        "find *": allow
+        "wc *": allow
+      webfetch: deny
+      websearch: deny
+      task: deny
+  implementation-reviewer:
+    description: Review approved architecture and create the pre-implementation review gate.
+    mode: subagent
+    temperature: 0.1
+    permission:
+      read: allow
+      edit: ask
+      bash:
+        "*": ask
+        "git status*": allow
+        "git diff*": allow
+        "rg *": allow
+        "sed *": allow
+        "find *": allow
+        "wc *": allow
+      webfetch: deny
+      websearch: deny
+      task: deny
+  spec-coder:
+    description: Implement approved SpecRepo changes within the approved scope.
+    mode: primary
+    temperature: 0.2
+    permission:
+      read: allow
+      edit: ask
+      bash:
+        "*": ask
+        "git status*": allow
+        "git diff*": allow
+        "rg *": allow
+        "sed *": allow
+        "find *": allow
+        "wc *": allow
+        "pytest*": allow
+        ".venv/bin/pytest*": allow
+        "python3 -m py_compile*": allow
+      webfetch: deny
+      websearch: deny
+      task: ask
+  test-reviewer:
+    description: Review tests and verification evidence for approved SpecRepo changes.
+    mode: subagent
+    temperature: 0.1
+    permission:
+      read: allow
+      edit: deny
+      bash:
+        "*": ask
+        "git status*": allow
+        "git diff*": allow
+        "rg *": allow
+        "sed *": allow
+        "find *": allow
+        "wc *": allow
+        "pytest*": allow
+        ".venv/bin/pytest*": allow
+      webfetch: deny
+      websearch: deny
+      task: deny
