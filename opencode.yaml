@@ -17,6 +17,24 @@ agents:
       webfetch: deny
       websearch: deny
       task: deny
+  request-author:
+    description: Create or refine SpecRepo feature requests without proposing architecture or editing implementation code.
+    mode: primary
+    temperature: 0.1
+    permission:
+      read: allow
+      edit: ask
+      bash:
+        "*": ask
+        "git status*": allow
+        "git diff*": allow
+        "rg *": allow
+        "sed *": allow
+        "find *": allow
+        "wc *": allow
+      webfetch: deny
+      websearch: deny
+      task: deny
   spec-reviewer:
     description: Create architecture proposals from SpecRepo requests without implementing code.
     mode: subagent

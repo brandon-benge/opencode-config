@@ -32,9 +32,9 @@ The target repository should have:
 - A feature request file under the request directory named in
   `specrepo/spec.yaml`.
 
-If the request does not exist yet, create one before asking any agent to begin.
-Keep the request small enough that behavior, non-goals, constraints, and
-acceptance criteria are clear.
+If the request does not exist yet, ask `@request-author` to create one before
+architecture work begins. Keep the request small enough that behavior,
+non-goals, constraints, and acceptance criteria are clear.
 
 If the target repository does not have `specrepo/`, ask
 `@specrepo-bootstrapper` to create it from the reusable template pack before
@@ -45,7 +45,7 @@ starting feature work.
 | Role | Responsibility |
 | --- | --- |
 | `@specrepo-bootstrapper` | Creates a complete repo-specific SpecRepo structure when a repository does not have one yet. |
-| Request author | Describes the desired repository-specific behavior and acceptance criteria. |
+| `@request-author` | Creates or refines one request with desired repository-specific behavior, acceptance criteria, constraints, and non-goals. |
 | `@spec-reviewer` | Turns one request into an architecture proposal and any justified baseline spec updates. |
 | `@architecture-approver` | Reviews proposal readiness and writes an approval record only after explicit human approval. |
 | Human approver | Owns the final architecture approval decision. |
@@ -57,7 +57,7 @@ starting feature work.
 ## End-To-End Lifecycle
 
 1. Create `specrepo/` with `@specrepo-bootstrapper` if it does not exist.
-2. Create the feature request.
+2. Ask `@request-author` to create or refine the feature request.
 3. Ask `@spec-reviewer` to create the architecture proposal.
 4. Review the proposal yourself.
 5. Ask `@architecture-approver` for an approval-readiness review.
@@ -105,10 +105,11 @@ Human gate:
 - Confirm the inferred project facts before using the generated SpecRepo for
   feature work.
 
-### 1. Create Or Refine The Request
+### 1. Create Or Refine The Request With `@request-author`
 
 ```text
-Create or refine this SpecRepo request at specrepo/requests/[request-name].md.
+@request-author Create or refine this SpecRepo request at
+specrepo/requests/[request-name].md.
 
 Feature:
 [describe the user-visible behavior]
@@ -124,7 +125,10 @@ Constraints:
 Non-goals:
 - [explicitly out of scope]
 
-Do not create an architecture proposal yet.
+Use the repository's feature-request template. Read specrepo/spec.yaml,
+specrepo/workflow.md, and the baseline specs first. Do not create an
+architecture proposal, approval record, implementation review, baseline spec
+update, or implementation change.
 ```
 
 Expected output:
@@ -182,16 +186,20 @@ Expected output:
 - Blocking issues, if any.
 - Non-blocking suggestions.
 - Approval conditions.
+- If the recommendation is `approve`, a copy-ready approval prompt for the
+  human to send back to `@architecture-approver`.
 
 Human gate:
 
 - If the recommendation is `revise` or `reject`, send the proposal back through
   `@spec-reviewer`.
-- If the recommendation is `approve`, make the final human approval decision.
+- If the recommendation is `approve`, make the final human approval decision by
+  sending the approval prompt shown by `@architecture-approver`.
 
-### 4. Human Approval Record
+### 4. Human Approval Prompt And Approval Record
 
-Only create an approval record after a human approves the proposal.
+Only create an approval record after a human approves the proposal through an
+explicit prompt. The approval-readiness recommendation is not approval.
 
 ```text
 @architecture-approver I approve
@@ -199,6 +207,7 @@ specrepo/proposals/YYYY-MM-DD-[short-name]/architecture.md.
 
 Create the approval record using the repository's approval-record template.
 Name me as the human approver for this opencode session.
+Conditions: [None, or the exact approval conditions to record].
 ```
 
 Expected output:
@@ -207,10 +216,11 @@ Expected output:
 - The approval record references the approved proposal.
 - The approval record names the human approver or states that the user approved
   it in the current opencode session.
+- The approval record preserves any approval conditions from the prompt.
 
 Human gate:
 
-- Verify the approval record points to the intended proposal.
+- Verify the approval record points to the intended proposal and conditions.
 - Implementation must not start until this record exists.
 
 ### 5. Implementation Review Gate With `@implementation-reviewer`

@@ -63,6 +63,23 @@ Default output is a review in chat with:
 - Blocking issues.
 - Non-blocking suggestions.
 - Approval conditions.
+- When the recommendation is `approve`, a copy-ready approval prompt the human
+  can send back to create the approval record.
+
+Use this prompt format exactly, replacing the proposal path and conditions:
+
+```text
+@architecture-approver I approve
+specrepo/proposals/YYYY-MM-DD-short-name/architecture.md.
+
+Create the approval record using the repository's approval-record template.
+Name me as the human approver for this opencode session.
+Conditions: <None, or the exact approval conditions to record>.
+```
+
+Do not treat your own `approve` recommendation as human approval. The approval
+record is created only after the human sends an explicit prompt like the one
+above.
 
 If and only if the user explicitly says the proposal is approved and asks for an
 approval record, create:

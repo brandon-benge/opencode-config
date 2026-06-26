@@ -18,7 +18,7 @@ project facts, gates, decisions, templates, and verification commands belong in
 
 | State | Directory | Owner | Exit Criteria |
 | --- | --- | --- | --- |
-| `requested` | `requests/` | Request author | Feature request is clear enough to review. |
+| `requested` | `requests/` | Request author, normally `@request-author` | Feature request is clear enough to review. |
 | `architecture_proposed` | `proposals/` | Spec reviewer | Proposal explains product, architecture, tests, and risks. |
 | `awaiting_approval` | `proposals/` | Human approver | Human accepts, rejects, or asks for revision. |
 | `approved` | `approved/` | Human approver | Approval record points to the accepted proposal. |
@@ -31,6 +31,8 @@ project facts, gates, decisions, templates, and verification commands belong in
 
 Use specialized SpecRepo agents for the workflow gates when they are available:
 
+- `@request-author` owns creating or refining request files in
+  `specrepo/requests/` before architecture work begins.
 - `@spec-reviewer` owns the transition from `requested` to
   `architecture_proposed`.
 - `@architecture-approver` reviews proposal readiness before the human approval
@@ -50,6 +52,12 @@ record that the specialized agent was unavailable.
 
 Feature requests belong in `specrepo/requests/` and should use
 `specrepo/templates/feature-request.md`.
+
+Use `@request-author` when a feature idea needs to be converted into a request
+or when an existing request needs clearer behavior, acceptance criteria,
+constraints, non-goals, or impacted-area notes. The request author may create or
+edit request files only; it must not create proposals, approvals,
+implementation reviews, baseline spec updates, or implementation changes.
 
 The request must include:
 
@@ -80,6 +88,30 @@ The proposal must state whether baseline specs were changed.
 Human approval is recorded by creating an approval file from
 `specrepo/templates/approval-record.md` under
 `specrepo/approved/YYYY-MM-DD-short-name/approval.md`.
+
+Use `@architecture-approver` for the agent-first approval flow:
+
+1. Ask `@architecture-approver` to review the proposal for approval readiness.
+2. If the recommendation is `approve`, read the proposal and review findings
+   yourself.
+3. If you approve, send an explicit approval prompt back to
+   `@architecture-approver`.
+4. `@architecture-approver` creates the final approval record only after that
+   explicit human approval prompt.
+
+Approval prompt format:
+
+```text
+@architecture-approver I approve
+specrepo/proposals/YYYY-MM-DD-short-name/architecture.md.
+
+Create the approval record using the repository's approval-record template.
+Name me as the human approver for this opencode session.
+Conditions: <None, or the exact approval conditions to record>.
+```
+
+An approval-readiness recommendation is not approval. Do not create, move, or
+treat any file as approved until the human sends an explicit approval prompt.
 
 The approval record must include:
 

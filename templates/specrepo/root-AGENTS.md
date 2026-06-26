@@ -13,10 +13,12 @@ not start implementation until there is an approved architecture record under
 
 Use the specialized SpecRepo agents for workflow gates when they are available:
 
+- Use `@request-author` to create or refine feature requests in
+  `specrepo/requests/` before architecture work begins.
 - Use `@spec-reviewer` to turn requests in `specrepo/requests/` into
   architecture proposals in `specrepo/proposals/`.
-- Use `@architecture-approver` to review proposal readiness before a human
-  creates or authorizes an approval record.
+- Use `@architecture-approver` to review proposal readiness and, after an
+  explicit human approval prompt, create the approval record.
 - Use `@implementation-reviewer` to create the required implementation review
   under `specrepo/implementation-reviews/` before code is edited.
 - Use `@spec-coder` only after an approval record and matching implementation
@@ -30,6 +32,16 @@ gate manually and record that the specialized agent was unavailable.
 
 ## Spec Review Path
 
+When asked to create or refine a feature request:
+
+1. Use `@request-author` when available.
+2. Read `specrepo/spec.yaml`, `specrepo/workflow.md`,
+   `specrepo/templates/feature-request.md`, and the baseline specs in
+   `specrepo/specs/`.
+3. Create or update one request under `specrepo/requests/`.
+4. Stop before architecture. Do not create proposals, approval records,
+   implementation reviews, baseline spec updates, or implementation changes.
+
 When asked to review a feature request or update architecture:
 
 1. Read `specrepo/spec.yaml`, `specrepo/workflow.md`, and the baseline specs in
@@ -39,6 +51,27 @@ When asked to review a feature request or update architecture:
 4. Update baseline specs only if the proposed architecture changes the approved
    understanding of the project.
 5. Stop and ask for human approval. Do not implement code.
+
+## Approval Path
+
+When asked to approve architecture:
+
+1. Use `@architecture-approver` to review the proposal for approval readiness.
+2. If the recommendation is `approve`, read the proposal and review findings.
+3. If the human approves, send an explicit prompt to `@architecture-approver`:
+
+   ```text
+   @architecture-approver I approve
+   specrepo/proposals/YYYY-MM-DD-short-name/architecture.md.
+
+   Create the approval record using the repository's approval-record template.
+   Name me as the human approver for this opencode session.
+   Conditions: <None, or the exact approval conditions to record>.
+   ```
+
+4. Do not treat an approval-readiness recommendation as approval. The approval
+   record under `specrepo/approved/` is authoritative only after the human
+   sends the explicit approval prompt.
 
 ## Implementation Path
 

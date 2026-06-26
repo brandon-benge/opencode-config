@@ -62,8 +62,9 @@ Both root configuration files are for opencode:
 | `opencode.yaml` | YAML opencode agent configuration for SpecRepo workflow agents. It centralizes each agent's description, mode, temperature, permissions, and tool access in one file. |
 
 `opencode.yaml` defines the workflow agents referenced below:
-`specrepo-bootstrapper`, `spec-reviewer`, `architecture-approver`,
-`implementation-reviewer`, `spec-coder`, and `test-reviewer`.
+`specrepo-bootstrapper`, `request-author`, `spec-reviewer`,
+`architecture-approver`, `implementation-reviewer`, `spec-coder`, and
+`test-reviewer`.
 
 `opencode.jsonc` configures two opencode agents:
 
@@ -79,7 +80,8 @@ as VCS internals and build outputs.
 
 1. If the target repository has no `specrepo/`, ask `@specrepo-bootstrapper`
    to create it.
-2. Put a request in `specrepo/requests/`.
+2. Ask `@request-author` to create or refine a request in
+   `specrepo/requests/`.
 3. Ask `@spec-reviewer` to create the architecture proposal.
 4. Review the proposal yourself.
 5. Ask `@architecture-approver` for an approval-readiness review.
@@ -94,6 +96,7 @@ as VCS internals and build outputs.
 | File | Purpose |
 | --- | --- |
 | `agents/specrepo-bootstrapper.md` | Creates a complete repo-specific SpecRepo structure and root `AGENTS.md` from reusable templates. |
+| `agents/request-author.md` | Creates or refines feature requests before architecture work begins. |
 | `agents/spec-reviewer.md` | Turns requests into architecture proposals. |
 | `agents/architecture-approver.md` | Reviews proposals before human approval. |
 | `agents/implementation-reviewer.md` | Reviews approved architecture before code changes. |

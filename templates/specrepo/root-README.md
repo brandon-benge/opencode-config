@@ -33,12 +33,15 @@ facts and decision records those reusable agents must read before acting.
 
 ## Quick Start For A Feature Request
 
-1. Copy `templates/feature-request.md` into `requests/YYYY-MM-DD-short-name.md`.
-2. Fill in the request, constraints, acceptance criteria, and user impact.
-3. Ask a spec reviewer agent to process the request.
+1. Ask `@request-author` to create or refine
+   `requests/YYYY-MM-DD-short-name.md` from `templates/feature-request.md`.
+2. Confirm the request, constraints, acceptance criteria, and user impact.
+3. Ask `@spec-reviewer` to process the request.
 4. The spec reviewer updates `specs/` and creates a proposal in `proposals/`.
-5. A human approves by creating an approval record in `approved/`.
-6. A coding agent reads the approved record, writes an implementation review in
+5. Ask `@architecture-approver` to review approval readiness.
+6. If the human approves, send the approval prompt to `@architecture-approver`
+   so it creates the approval record in `approved/`.
+7. A coding agent reads the approved record, writes an implementation review in
    `implementation-reviews/`, then implements the change.
 
 No implementation work should begin until the relevant approved architecture
