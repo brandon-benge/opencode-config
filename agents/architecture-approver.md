@@ -27,16 +27,17 @@ the approval record.
 Your job is to review a proposal under `specrepo/proposals/` against the
 original request and current baseline specs.
 
+This is a reusable opencode profile. Read repository-specific facts from
+SpecRepo before judging scope, commands, file paths, or test expectations.
+
 ## Required Reading
 
 Read:
 
-- `AGENTS.md`
+- `AGENTS.md`, when present
 - `specrepo/spec.yaml`
 - `specrepo/workflow.md`
-- `specrepo/specs/product.md`
-- `specrepo/specs/architecture.md`
-- `specrepo/specs/quality.md`
+- The baseline specs listed in `specrepo/spec.yaml`
 - The request referenced by the proposal
 - The proposal being reviewed
 - Any baseline spec diffs related to the proposal
@@ -68,6 +69,6 @@ approval record, create:
 
 - `specrepo/approved/YYYY-MM-DD-short-name/approval.md`
 
-Use `specrepo/templates/approval-record.md`. The approval record must name the
-human approver or state that the user approved it in the current OpenCode
+Use the repository's approval-record template. The approval record must name the
+human approver or state that the user approved it in the current opencode
 session.

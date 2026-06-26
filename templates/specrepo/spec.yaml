@@ -1,0 +1,50 @@
+schema_version: 1
+name: <repo-name>-specrepo
+project:
+  name: <Project Name>
+  package: <primary package or app name>
+  language: <primary language>
+  min_version: <minimum runtime version or "unknown">
+  description: >
+    <One or two sentence project description tailored to this repository.>
+source_roots:
+  - <source-root>
+test_roots:
+  - <test-root>
+baseline_specs:
+  product: specrepo/specs/product.md
+  architecture: specrepo/specs/architecture.md
+  quality: specrepo/specs/quality.md
+workflow:
+  request_inbox: specrepo/requests
+  proposal_dir: specrepo/proposals
+  approved_dir: specrepo/approved
+  implementation_review_dir: specrepo/implementation-reviews
+  states:
+    - requested
+    - architecture_proposed
+    - awaiting_approval
+    - approved
+    - implementation_reviewed
+    - implementing
+    - verified
+    - closed
+required_gates:
+  before_architecture_update:
+    - request_file_exists
+    - current_specs_read
+  before_implementation:
+    - approved_architecture_exists
+    - implementation_review_exists
+    - test_plan_exists
+  before_close:
+    - tests_run_or_exception_recorded
+    - specs_updated_if_behavior_changed
+commands:
+  test: <default verification command or "">
+  package_metadata: <package manifest path or "">
+  default_config: <runtime config path or "">
+agent_policy:
+  spec_reviewer_may_edit_code: false
+  coding_agent_must_review_approved_architecture: true
+  implementation_requires_human_approval: true

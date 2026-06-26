@@ -20,14 +20,11 @@
   "watcher": {
     "ignore": [
       ".git/**",
-      ".venv/**",
-      "venv/**",
-      "node_modules/**",
       "dist/**",
       "build/**",
-      "__pycache__/**",
-      ".pytest_cache/**",
-      ".mypy_cache/**"
+      ".cache/**",
+      "tmp/**",
+      "temp/**"
     ]
   }
 }

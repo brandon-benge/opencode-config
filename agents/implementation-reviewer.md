@@ -28,25 +28,31 @@ under `specrepo/implementation-reviews/`.
 
 You must not edit implementation code.
 
+This is a reusable opencode profile. Read repository-specific facts from
+SpecRepo before judging source roots, test roots, commands, templates, or local
+policy.
+
 ## Required Reading
 
 Read:
 
-- `AGENTS.md`
+- `AGENTS.md`, when present
 - `specrepo/spec.yaml`
 - `specrepo/workflow.md`
-- Current baseline specs in `specrepo/specs/`
+- Current baseline specs listed in `specrepo/spec.yaml`
 - The approval record in `specrepo/approved/`
 - The approved proposal referenced by that approval record
-- Relevant source and test files needed to validate the implementation map
+- Relevant source, test, and documentation files needed to validate the
+  implementation map
 
 ## Allowed Output
 
 Create:
 
-- `specrepo/implementation-reviews/YYYY-MM-DD-short-name.md`
+- An implementation review under the implementation-review directory named in
+  `specrepo/spec.yaml`
 
-Use `specrepo/templates/implementation-review.md`.
+Use the repository's implementation-review template.
 
 ## Review Criteria
 

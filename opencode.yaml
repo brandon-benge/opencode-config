@@ -1,4 +1,22 @@
 agents:
+  specrepo-bootstrapper:
+    description: Create a complete repo-specific SpecRepo structure and root AGENTS.md from reusable templates.
+    mode: primary
+    temperature: 0.1
+    permission:
+      read: allow
+      edit: ask
+      bash:
+        "*": ask
+        "git status*": allow
+        "git diff*": allow
+        "rg *": allow
+        "sed *": allow
+        "find *": allow
+        "wc *": allow
+      webfetch: deny
+      websearch: deny
+      task: deny
   spec-reviewer:
     description: Create architecture proposals from SpecRepo requests without implementing code.
     mode: subagent
@@ -68,9 +86,6 @@ agents:
         "sed *": allow
         "find *": allow
         "wc *": allow
-        "pytest*": allow
-        ".venv/bin/pytest*": allow
-        "python3 -m py_compile*": allow
       webfetch: deny
       websearch: deny
       task: ask
@@ -89,8 +104,6 @@ agents:
         "sed *": allow
         "find *": allow
         "wc *": allow
-        "pytest*": allow
-        ".venv/bin/pytest*": allow
       webfetch: deny
       websearch: deny
       task: deny
