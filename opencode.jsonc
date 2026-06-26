@@ -1,0 +1,33 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  "agent": {
+    "plan": {
+      "temperature": 0.1,
+      "steps": 3,
+      "tools": {
+        "write": false,
+        "edit": false
+      }
+    },
+
+    "build": {
+      "temperature": 0.1,
+      "steps": 10
+    }
+  },
+
+  "watcher": {
+    "ignore": [
+      ".git/**",
+      ".venv/**",
+      "venv/**",
+      "node_modules/**",
+      "dist/**",
+      "build/**",
+      "__pycache__/**",
+      ".pytest_cache/**",
+      ".mypy_cache/**"
+    ]
+  }
+}
