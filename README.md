@@ -102,6 +102,7 @@ as VCS internals and build outputs.
 | `agents/implementation-reviewer.md` | Reviews approved architecture before code changes. |
 | `agents/spec-coder.md` | Implements only after approval and implementation review exist. |
 | `agents/test-reviewer.md` | Reviews tests and verification evidence. |
+| `specrepo-autocommit` | Finalization hook run by `@spec-coder` after required verification passes; blocks on `main` and chooses credentials from `OPENCODE_API_KEY` or Keychain. |
 | `templates/specrepo/` | Reusable template pack for generating a repo-specific `specrepo/` directory. |
 | `opencode.yaml` | YAML opencode agent configuration for the SpecRepo workflow agents. |
 | `opencode.jsonc` | Root opencode config for the `plan` and `build` agents plus watcher ignores. |

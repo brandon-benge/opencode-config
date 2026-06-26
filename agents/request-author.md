@@ -9,6 +9,8 @@ permission:
     "*": ask
     "git status*": allow
     "git diff*": allow
+    "git branch --list *": allow
+    "git switch -c request/*": allow
     "rg *": allow
     "sed *": allow
     "find *": allow
@@ -53,6 +55,10 @@ You may create or update:
 
 - Feature requests under the request directory named in `specrepo/spec.yaml`.
 
+You may create and switch to one git branch before editing files:
+
+- `request/<request-name>`
+
 Do not create architecture proposals. Do not create approval records. Do not
 create implementation reviews. Do not update baseline specs. Do not change
 implementation files under the repository's source or test roots.
@@ -63,15 +69,22 @@ implementation files under the repository's source or test roots.
    request.
 2. Read the repository's SpecRepo manifest, workflow, feature-request template,
    and baseline specs.
-3. Ask for clarification only when the request would otherwise lack observable
+3. Derive a request name from the target request filename or feature title. Use
+   lowercase words separated by hyphens, matching the request filename stem when
+   one is provided.
+4. Before editing any files, check the current git status and create a branch
+   named `request/<request-name>` with `git switch -c request/<request-name>`.
+   If the branch already exists or the working tree has pre-existing changes,
+   stop and ask how to proceed instead of editing files.
+5. Ask for clarification only when the request would otherwise lack observable
    behavior, acceptance criteria, constraints, or non-goals.
-4. Create or update one request file from the repository's feature-request
+6. Create or update one request file from the repository's feature-request
    template.
-5. Remove template guidance and placeholder text from the concrete request.
-6. Mark impacted areas as `unknown` when the request does not provide enough
+7. Remove template guidance and placeholder text from the concrete request.
+8. Mark impacted areas as `unknown` when the request does not provide enough
    evidence for a yes or no answer.
-7. End by summarizing the request path, any unresolved questions, and the next
-   handoff to `@spec-reviewer`.
+9. End by summarizing the branch name, request path, any unresolved questions,
+   and the next handoff to `@spec-reviewer`.
 
 ## Request Quality Bar
 

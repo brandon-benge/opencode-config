@@ -126,13 +126,15 @@ Non-goals:
 - [explicitly out of scope]
 
 Use the repository's feature-request template. Read specrepo/spec.yaml,
-specrepo/workflow.md, and the baseline specs first. Do not create an
-architecture proposal, approval record, implementation review, baseline spec
+specrepo/workflow.md, and the baseline specs first. Before editing files,
+create and switch to a git branch named request/[request-name]. Do not create
+an architecture proposal, approval record, implementation review, baseline spec
 update, or implementation change.
 ```
 
 Expected output:
 
+- Git branch `request/[request-name]`.
 - `specrepo/requests/[request-name].md`
 - Clear acceptance criteria.
 - Explicit constraints and non-goals.
@@ -258,7 +260,9 @@ specrepo/implementation-reviews/YYYY-MM-DD-[short-name].md.
 Stay within the approved scope. Add or update the tests or checks required by
 the approved verification plan. If implementation reveals a material
 architecture change, stop and ask for a revised proposal. Run the approved
-verification commands and summarize the results.
+verification commands. If they all pass, call
+`$HOME/.config/opencode/specrepo-autocommit` with a four-line summary as the
+final step, then summarize the results.
 ```
 
 Expected output:
@@ -266,6 +270,7 @@ Expected output:
 - Source, config, docs, or spec changes within the approved scope.
 - Test or verification changes required by the approved test plan.
 - Verification commands and results, or a recorded reason they could not run.
+- Autocommit hook result when verification passed, or the reason it was skipped.
 
 Human gate:
 

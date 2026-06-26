@@ -9,6 +9,7 @@ permission:
     "*": ask
     "git status*": allow
     "git diff*": allow
+    "$HOME/.config/opencode/specrepo-autocommit *": ask
     "rg *": allow
     "sed *": allow
     "find *": allow
@@ -65,6 +66,17 @@ is configured.
 
 If verification cannot run, record the exact reason in your final response.
 
+After all required verification commands pass, call the local autocommit hook as
+the final command:
+
+```bash
+$HOME/.config/opencode/specrepo-autocommit "<four-line summary of what changed>"
+```
+
+The summary must contain exactly four non-empty lines. Do not call the hook when
+verification fails, is skipped, or cannot run. The hook blocks autocommit on the
+`main` branch and chooses credentials based on `OPENCODE_API_KEY`.
+
 ## Final Response
 
 Summarize:
@@ -72,4 +84,5 @@ Summarize:
 - What changed.
 - Which approved request/proposal you implemented.
 - Tests run and results.
+- Whether the autocommit hook ran, was blocked, or was skipped.
 - Any follow-up required.

@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  cat >&2 <<'USAGE'
+Usage:
+  specrepo-autocommit "<four-line summary>"
+
+Runs the configured autocommit command only when the current git branch is not
+main. The summary must contain exactly four non-empty lines.
+USAGE
+}
+
+if [ "$#" -eq 0 ]; then
+  usage
+  exit 64
+fi
+
+summary="$*"
+summary_line_count="$(printf '%s\n' "$summary" | sed '/^[[:space:]]*$/d' | wc -l | tr -d '[:space:]')"
+
+if [ "$summary_line_count" != "4" ]; then
+  echo "Autocommit blocked: expected a 4-line summary, got ${summary_line_count} non-empty line(s)." >&2
+  exit 64
+fi
+
+branch="$(git symbolic-ref --quiet --short HEAD || true)"
+
+if [ -z "$branch" ]; then
+  branch="$(git rev-parse --short HEAD 2>/dev/null || true)"
+fi
+
+if [ -z "$branch" ]; then
+  echo "Autocommit blocked: could not determine the current git branch." >&2
+  exit 1
+fi
+
+if [ "$branch" = "main" ]; then
+  echo "Autocommit blocked: current branch is main."
+  exit 0
+fi
+
+if [ -n "${OPENCODE_API_KEY:-}" ]; then
+  echo "OPENCODE_API_KEY is set; running opencode autocommit on branch ${branch}."
+  exec opencode -c "$summary"
+fi
+
+echo "OPENCODE_API_KEY is not set; running autocommit with keychain credentials on branch ${branch}."
+exec autocommit \
+  --keychain \
+  --keychain-service "langchain_autocommit" \
+  --keychain-key "opencode_api_key" \
+  -c "$summary"

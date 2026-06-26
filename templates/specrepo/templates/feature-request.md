@@ -3,8 +3,9 @@
 Use `@request-author` to create or refine this file from a feature idea. The
 request author should fill the request with user-visible behavior, acceptance
 criteria, constraints, non-goals, and known impacted areas, then stop before any
-architecture proposal or implementation work begins. Remove this usage note
-from concrete request files.
+architecture proposal or implementation work begins. Before editing the request
+file, it should create and switch to a git branch named
+`request/<request-name>`. Remove this usage note from concrete request files.
 
 Status: requested
 Date: YYYY-MM-DD

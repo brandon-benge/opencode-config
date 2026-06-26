@@ -38,8 +38,12 @@ When asked to create or refine a feature request:
 2. Read `specrepo/spec.yaml`, `specrepo/workflow.md`,
    `specrepo/templates/feature-request.md`, and the baseline specs in
    `specrepo/specs/`.
-3. Create or update one request under `specrepo/requests/`.
-4. Stop before architecture. Do not create proposals, approval records,
+3. Derive the request name from the target request filename or feature title.
+4. Before editing files, create and switch to a git branch named
+   `request/<request-name>`. If the branch already exists or the working tree
+   has pre-existing changes, stop and ask how to proceed.
+5. Create or update one request under `specrepo/requests/`.
+6. Stop before architecture. Do not create proposals, approval records,
    implementation reviews, baseline spec updates, or implementation changes.
 
 When asked to review a feature request or update architecture:
@@ -84,7 +88,11 @@ When asked to implement an approved change:
    under `specrepo/implementation-reviews/`.
 5. Implement only within the approved scope.
 6. Run the approved verification plan or record why it could not be run.
-7. Use `@test-reviewer` to review coverage and verification evidence before
+7. If all required verification commands pass, run
+   `$HOME/.config/opencode/specrepo-autocommit` with a four-line summary as the
+   final command. Do not run it when verification fails, is skipped, or cannot
+   run. The hook blocks autocommit on `main`.
+8. Use `@test-reviewer` to review coverage and verification evidence before
    closing the change.
 
 If the approved architecture is incomplete, inconsistent, or requires material

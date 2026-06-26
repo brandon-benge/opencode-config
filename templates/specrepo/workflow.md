@@ -56,7 +56,8 @@ Feature requests belong in `specrepo/requests/` and should use
 Use `@request-author` when a feature idea needs to be converted into a request
 or when an existing request needs clearer behavior, acceptance criteria,
 constraints, non-goals, or impacted-area notes. The request author may create or
-edit request files only; it must not create proposals, approvals,
+switch to a git branch named `request/<request-name>` before editing files, then
+create or edit request files only. It must not create proposals, approvals,
 implementation reviews, baseline spec updates, or implementation changes.
 
 The request must include:
@@ -154,6 +155,11 @@ The default verification command is defined in `specrepo/spec.yaml` under
 
 If tests cannot be run, record the reason in the implementation review or final
 implementation notes.
+
+After all required verification commands pass, implementation agents should run
+`$HOME/.config/opencode/specrepo-autocommit` with a four-line summary as their
+final command. Do not run the hook when verification fails, is skipped, or
+cannot run. The hook blocks autocommit on `main`.
 
 Use `@test-reviewer` to review the implemented diff, tests, and verification
 evidence before closing the change when that agent is available.

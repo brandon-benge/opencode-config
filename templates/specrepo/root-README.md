@@ -35,13 +35,15 @@ facts and decision records those reusable agents must read before acting.
 
 1. Ask `@request-author` to create or refine
    `requests/YYYY-MM-DD-short-name.md` from `templates/feature-request.md`.
-2. Confirm the request, constraints, acceptance criteria, and user impact.
-3. Ask `@spec-reviewer` to process the request.
-4. The spec reviewer updates `specs/` and creates a proposal in `proposals/`.
-5. Ask `@architecture-approver` to review approval readiness.
-6. If the human approves, send the approval prompt to `@architecture-approver`
+2. `@request-author` creates and switches to branch
+   `request/YYYY-MM-DD-short-name` before editing the request file.
+3. Confirm the request, constraints, acceptance criteria, and user impact.
+4. Ask `@spec-reviewer` to process the request.
+5. The spec reviewer updates `specs/` and creates a proposal in `proposals/`.
+6. Ask `@architecture-approver` to review approval readiness.
+7. If the human approves, send the approval prompt to `@architecture-approver`
    so it creates the approval record in `approved/`.
-7. A coding agent reads the approved record, writes an implementation review in
+8. A coding agent reads the approved record, writes an implementation review in
    `implementation-reviews/`, then implements the change.
 
 No implementation work should begin until the relevant approved architecture

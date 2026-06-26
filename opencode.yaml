@@ -28,6 +28,8 @@ agents:
         "*": ask
         "git status*": allow
         "git diff*": allow
+        "git branch --list *": allow
+        "git switch -c request/*": allow
         "rg *": allow
         "sed *": allow
         "find *": allow
@@ -100,6 +102,7 @@ agents:
         "*": ask
         "git status*": allow
         "git diff*": allow
+        "$HOME/.config/opencode/specrepo-autocommit *": ask
         "rg *": allow
         "sed *": allow
         "find *": allow
