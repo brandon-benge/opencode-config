@@ -6,7 +6,7 @@ are approved here, and implementation agents use the approved records before
 editing code.
 
 Reusable opencode agent profiles, permissions, and general workflow guidance
-live in `opencode-config/`. This `specrepo/` directory owns the local project
+live in `$HOME/.config/opencode/agents/`. This `specrepo/` directory owns the local project
 facts and decision records those reusable agents must read before acting.
 
 ## Current Project

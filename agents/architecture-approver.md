@@ -5,13 +5,30 @@ temperature: 0.1
 permission:
   read: allow
   edit: ask
+  glob: allow
+  grep: allow
+  list: allow
+  lsp: allow
   bash:
     "*": ask
+    "pwd": allow
+    "ls": allow
+    "ls *": allow
+    "cat *": allow
+    "head *": allow
+    "tail *": allow
+    "nl *": allow
     "git status*": allow
     "git diff*": allow
+    "git log*": allow
+    "git show*": allow
+    "git grep*": allow
+    "git ls-files*": allow
+    "git rev-parse*": allow
+    "git branch --show-current": allow
+    "git branch --list*": allow
     "rg *": allow
-    "sed *": allow
-    "find *": allow
+    "sed -n *": allow
     "wc *": allow
   webfetch: deny
   websearch: deny

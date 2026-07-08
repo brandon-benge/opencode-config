@@ -7,7 +7,7 @@ and replaces placeholders with facts discovered from that repository. Do not
 copy the placeholders verbatim when enough project context is available.
 
 Generated `specrepo/` directories should not include agent profiles. Reusable
-agent behavior belongs in `opencode-config/agents/`.
+agent behavior belongs in `$HOME/.config/opencode/agents/`.
 
 `root-README.md` is the template for the generated `specrepo/README.md`.
 `root-AGENTS.md` is the template for a generated or updated repository-root

@@ -20,6 +20,45 @@ It creates the complete structure from the reusable templates in
 target repository. It also creates or updates a repository-root `AGENTS.md`
 that points agents at the generated SpecRepo workflow.
 
+## Install From Scratch
+
+opencode reads its user configuration from `~/.config/opencode`. To use this
+repository as your reusable opencode configuration, clone it somewhere stable
+and make `~/.config/opencode` a symlink to the clone.
+
+Example macOS setup:
+
+```bash
+mkdir -p ~/Desktop/GitProjects ~/.config
+PWD_LOCAL=$(pwd)
+git clone https://github.com/brandon-benge/opencode-config.git opencode-config
+
+if [ -e ~/.config/opencode ] && [ ! -L ~/.config/opencode ]; then
+  mv ~/.config/opencode ~/.config/opencode.backup
+fi
+
+ln -sfn ${PWD_LOCAL}/opencode-config ~/.config/opencode
+```
+
+Verify the link:
+
+```bash
+ls -l ~/.config/opencode
+```
+
+Expected shape:
+
+```text
+~/.config/opencode -> /Users/<you>/Desktop/GitProjects/opencode-config
+```
+
+After this, opencode can find the root config files in this repository:
+`opencode.yaml` and `opencode.jsonc`.
+
+If you already have an opencode configuration, review it before replacing the
+directory. Move any local settings you want to keep into this repository, or
+keep the backup created above at `~/.config/opencode.backup`.
+
 ## Enable Markdown Profiles
 
 Copy the agent files you want into:

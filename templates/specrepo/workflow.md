@@ -10,7 +10,7 @@ repository. Reusable opencode agents may execute the roles, but they must read
 `specrepo/spec.yaml`, this workflow, the baseline specs, and the active
 request/proposal/approval/review records before acting.
 
-Reusable opencode mechanics belong in `opencode-config/`. Repository-specific
+Reusable opencode mechanics belong in `$HOME/.config/opencode/agents/`. Repository-specific
 project facts, gates, decisions, templates, and verification commands belong in
 `specrepo/`.
 
