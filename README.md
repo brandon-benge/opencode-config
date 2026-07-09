@@ -29,7 +29,6 @@ and make `~/.config/opencode` a symlink to the clone.
 Example macOS setup:
 
 ```bash
-mkdir -p ~/Desktop/GitProjects ~/.config
 PWD_LOCAL=$(pwd)
 git clone https://github.com/brandon-benge/opencode-config.git opencode-config
 
@@ -59,23 +58,20 @@ If you already have an opencode configuration, review it before replacing the
 directory. Move any local settings you want to keep into this repository, or
 keep the backup created above at `~/.config/opencode.backup`.
 
-## Enable Markdown Profiles
+## Agent Discovery
 
-Copy the agent files you want into:
+opencode automatically loads agent `.md` profiles from
+`~/.config/opencode/agents/`. Since `~/.config/opencode` is a symlink to this
+repository, every agent file under [`agents/`](./agents/) is immediately
+available as an opencode agent (for example `agents/architecture-approver.md`
+becomes `@architecture-approver`).
 
-```text
-.opencode/agents/
-```
+Agents are also registered in [`opencode.yaml`](./opencode.yaml), which defines
+each agent's mode, temperature, permissions, and tool access. The YAML
+configuration and the markdown profiles work together — the YAML sets the
+agent's runtime properties and the markdown file provides its system prompt.
 
-Example:
-
-```bash
-mkdir -p .opencode/agents
-cp agents/*.md .opencode/agents/
-```
-
-opencode uses the Markdown filename as the agent name. For example,
-`spec-reviewer.md` becomes `@spec-reviewer`.
+No additional setup or file copying is required after the symlink installation.
 
 ## Repository Fact Source
 
@@ -172,4 +168,5 @@ verification commands repository-specific: read them from SpecRepo artifacts or
 add local allowlists after copying the config into a target repository.
 
 If your opencode version supports reliable path-scoped edit permissions, you can
-tighten each profile further after copying it into `.opencode/agents/`.
+tighten each profile further after placing a copy in `.opencode/agents/` of a
+target repository.
