@@ -50,7 +50,7 @@ graph TD
         TestReviewer[→ @test-reviewer]:::subagent
         TestResult{Result}:::decision
         FixTests[Fix and re-run]:::primary
-        Autocommit[Autocommit hook]:::auto
+        Autocommit[Autocommit: git commit]:::auto
 
         SpecCoder --> ImplReview
         ImplReview --> ImplGate
@@ -61,11 +61,14 @@ graph TD
         TestReviewer --> TestResult
         TestResult -->|pass| Autocommit
         TestResult -->|needs more tests| FixTests
-        FixTests --> Verify
+        FixTests -->|retry| Verify
         TestResult -->|blocked| StopBlock((Stop)):::terminal
     end
 
     Autocommit --> FinalReview
+
+    NoteAuto["Autocommit runs only after tests pass. It updates git but does no verification itself."]:::auto
+    Autocommit -.- NoteAuto
 
     subgraph MergePhase[Final Review]
         FinalReview[Review diff and summary]:::human
@@ -77,6 +80,6 @@ graph TD
         Merge -->|No| Reject((Don't merge)):::terminal
     end
 
-    StopImpl -.->|Optionally| RequestPhase
-    StopRev -.->|Refine| RequestPhase
-    StopArch -.->|Request revised| RequestPhase
+    StopImpl -.->|retry with refined request| RequestPhase
+    StopRev -.->|retry with clearer request| RequestPhase
+    StopArch -.->|retry with revised architecture| RequestPhase

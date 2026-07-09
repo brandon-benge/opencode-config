@@ -192,7 +192,7 @@ specrepo/approved/YYYY-MM-DD-[short-name]/approval.md.
 | 2 | `@spec-coder` implements | Source, config, test, doc changes |
 | 3 | `@spec-coder` runs verification | Verification results |
 | 4 | → `@test-reviewer` (auto) | Recommendation: `pass` / `needs more tests` / `blocked` |
-| 5 | `@spec-coder` acts on result | Autocommit (if `pass`) or fixes (if `needs more tests`) |
+| 5 | `@spec-coder` acts on result | Autocommit (git commit, no checks) if `pass`; or retry loop (fix → verify → test review) if `needs more tests` |
 
 Expected output:
 
@@ -201,7 +201,8 @@ Expected output:
 - Tests or checks required by the approved test plan.
 - Verification commands and results, or a recorded reason they could not run.
 - `@test-reviewer` recommendation.
-- Autocommit hook result when verification passed and review passed.
+- Autocommit (git commit, no checks — only runs when verification passed and
+  test review passed).
 
 Human gate:
 
@@ -249,7 +250,9 @@ Human gate:
 - After `@spec-coder` finishes, read its summary — it includes the
   `@test-reviewer` recommendation. If the result was `needs more tests`,
   re-run `@spec-coder` to fix; the chain re-invokes `@test-reviewer`
-  automatically.
+  automatically in a retry loop (fix → verify → review).
+- The autocommit hook is a plain `git commit`. It runs only after tests pass
+  and `@test-reviewer` returns `pass`. It performs no verification of its own.
 - You never need to call `@spec-reviewer`, `@architecture-approver`,
   `@implementation-reviewer`, or `@test-reviewer` directly. Call only the
   primary agents (`@request-author`, `@spec-coder`) and let the chain handle
