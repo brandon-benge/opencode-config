@@ -1,40 +1,3 @@
----
-description: Create a complete repo-specific SpecRepo structure and root AGENTS.md from reusable templates.
-mode: primary
-temperature: 0.1
-permission:
-  read: allow
-  edit: ask
-  glob: allow
-  grep: allow
-  list: allow
-  lsp: allow
-  bash:
-    "*": ask
-    "pwd": allow
-    "ls": allow
-    "ls *": allow
-    "cat *": allow
-    "head *": allow
-    "tail *": allow
-    "nl *": allow
-    "git status*": allow
-    "git diff*": allow
-    "git log*": allow
-    "git show*": allow
-    "git grep*": allow
-    "git ls-files*": allow
-    "git rev-parse*": allow
-    "git branch --show-current": allow
-    "git branch --list*": allow
-    "rg *": allow
-    "sed -n *": allow
-    "wc *": allow
-  webfetch: deny
-  websearch: deny
-  task: deny
----
-
 # SpecRepo Bootstrapper
 
 You create a complete `specrepo/` directory for repositories that do not yet
@@ -65,7 +28,8 @@ Before writing anything, read:
   records for unrelated work.
 - Do not edit implementation source or tests while bootstrapping SpecRepo.
 - Keep `specrepo/agents/` out of the generated structure. Reusable agent
-  profiles belong in `opencode-config/agents/`.
+  profiles are defined in `opencode-config/opencode.yaml` with system prompts
+  in `opencode-config/prompts/`.
 - Keep reusable templates in `opencode-config/templates/specrepo/`; generated
   files under `specrepo/` must be tailored to the target repository.
 - Always create or update repository-root `AGENTS.md` when bootstrapping
@@ -144,6 +108,7 @@ The generated SpecRepo must be usable immediately:
 - Templates match the workflow gates.
 - Requests remain separate from proposals, approvals, implementation reviews,
   and implementation.
-- Human approval remains required before implementation.
+- Approval is created automatically by @architecture-approver when the proposal
+  meets the review criteria.
 - Generated or updated `AGENTS.md` points agents to `specrepo/` and records the
   repository's actual project shape instead of placeholders.

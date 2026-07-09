@@ -1,6 +1,7 @@
 agents:
   specrepo-bootstrapper:
     description: Create a complete repo-specific SpecRepo structure and root AGENTS.md from reusable templates.
+    prompt: "{file:./prompts/specrepo-bootstrapper.txt}"
     mode: primary
     temperature: 0.1
     permission:
@@ -36,6 +37,7 @@ agents:
       task: deny
   request-author:
     description: Create or refine SpecRepo feature requests without proposing architecture or editing implementation code.
+    prompt: "{file:./prompts/request-author.txt}"
     mode: primary
     temperature: 0.1
     permission:
@@ -72,6 +74,7 @@ agents:
       task: deny
   spec-reviewer:
     description: Create architecture proposals from SpecRepo requests without implementing code.
+    prompt: "{file:./prompts/spec-reviewer.txt}"
     mode: subagent
     temperature: 0.1
     permission:
@@ -107,6 +110,7 @@ agents:
       task: deny
   architecture-approver:
     description: Review architecture proposals and create approval records automatically.
+    prompt: "{file:./prompts/architecture-approver.txt}"
     mode: subagent
     temperature: 0.1
     permission:
@@ -142,6 +146,7 @@ agents:
       task: deny
   implementation-reviewer:
     description: Review approved architecture and create the pre-implementation review gate.
+    prompt: "{file:./prompts/implementation-reviewer.txt}"
     mode: subagent
     temperature: 0.1
     permission:
@@ -177,6 +182,7 @@ agents:
       task: deny
   spec-coder:
     description: Implement approved SpecRepo changes within the approved scope.
+    prompt: "{file:./prompts/spec-coder.txt}"
     mode: primary
     temperature: 0.2
     permission:
@@ -213,6 +219,7 @@ agents:
       task: ask
   test-reviewer:
     description: Review tests and verification evidence for approved SpecRepo changes.
+    prompt: "{file:./prompts/test-reviewer.txt}"
     mode: subagent
     temperature: 0.1
     permission:

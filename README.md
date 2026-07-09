@@ -58,20 +58,16 @@ If you already have an opencode configuration, review it before replacing the
 directory. Move any local settings you want to keep into this repository, or
 keep the backup created above at `~/.config/opencode.backup`.
 
-## Agent Discovery
+## Agent Configuration
 
-opencode automatically loads agent `.md` profiles from
-`~/.config/opencode/agents/`. Since `~/.config/opencode` is a symlink to this
-repository, every agent file under [`agents/`](./agents/) is immediately
-available as an opencode agent (for example `agents/architecture-approver.md`
-becomes `@architecture-approver`).
+Agents are defined in [`opencode.yaml`](./opencode.yaml), which is the single
+source of truth for each agent's description, mode, temperature, permissions,
+and tool access. Their system prompts live in [`prompts/`](./prompts/) as
+standalone `.txt` files referenced via the `prompt: "{file:...}"` field.
 
-Agents are also registered in [`opencode.yaml`](./opencode.yaml), which defines
-each agent's mode, temperature, permissions, and tool access. The YAML
-configuration and the markdown profiles work together — the YAML sets the
-agent's runtime properties and the markdown file provides its system prompt.
-
-No additional setup or file copying is required after the symlink installation.
+For example, `opencode.yaml` defines `@architecture-approver` and loads its
+prompt from `prompts/architecture-approver.txt`. No additional setup or file
+copying is required after the symlink installation.
 
 ## Repository Fact Source
 
@@ -94,7 +90,7 @@ Both root configuration files are for opencode:
 | File | Role |
 | --- | --- |
 | `opencode.jsonc` | Root JSONC opencode configuration for the `plan` and `build` agents plus watcher behavior. |
-| `opencode.yaml` | YAML opencode agent configuration for SpecRepo workflow agents. It centralizes each agent's description, mode, temperature, permissions, and tool access in one file. |
+| `opencode.yaml` | YAML opencode agent configuration for SpecRepo workflow agents. Defines each agent's description, mode, temperature, permissions, and tool access, and loads its system prompt from `prompts/` via the `prompt` field. |
 
 `opencode.yaml` defines the workflow agents referenced below:
 `specrepo-bootstrapper`, `request-author`, `spec-reviewer`,
@@ -146,17 +142,11 @@ prompt templates.
 
 | File | Purpose |
 | --- | --- |
-| `agents/specrepo-bootstrapper.md` | Creates a complete repo-specific SpecRepo structure and root `AGENTS.md` from reusable templates. |
-| `agents/request-author.md` | Creates or refines feature requests before architecture work begins. |
-| `agents/spec-reviewer.md` | Turns requests into architecture proposals. |
-| `agents/architecture-approver.md` | Reviews proposals and creates approval records automatically. |
-| `agents/implementation-reviewer.md` | Reviews approved architecture before code changes. |
-| `agents/spec-coder.md` | Implements only after approval and implementation review exist. |
-| `agents/test-reviewer.md` | Reviews tests and verification evidence. |
+| `opencode.yaml` | YAML agent configuration defining each agent's metadata and loading its system prompt from `prompts/`. |
+| `opencode.jsonc` | Root opencode config for the `plan` and `build` agents plus watcher ignores. |
+| `prompts/` | System prompt `.txt` files loaded by each agent via the `prompt: "{file:...}"` field in `opencode.yaml`. |
 | `specrepo-autocommit` | Finalization hook run by `@spec-coder` after required verification passes; blocks on `main` and chooses credentials from `OPENCODE_API_KEY` or Keychain. |
 | `templates/specrepo/` | Reusable template pack for generating a repo-specific `specrepo/` directory. |
-| `opencode.yaml` | YAML opencode agent configuration for the SpecRepo workflow agents. |
-| `opencode.jsonc` | Root opencode config for the `plan` and `build` agents plus watcher ignores. |
 
 ## Permission Notes
 
@@ -168,5 +158,4 @@ verification commands repository-specific: read them from SpecRepo artifacts or
 add local allowlists after copying the config into a target repository.
 
 If your opencode version supports reliable path-scoped edit permissions, you can
-tighten each profile further after placing a copy in `.opencode/agents/` of a
-target repository.
+tighten each profile further in `opencode.yaml`.
