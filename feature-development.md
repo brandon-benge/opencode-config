@@ -88,8 +88,9 @@ primary agents at the right time.
 📊 [Feature Development Lifecycle](feature-development-lifecycle.mmd) —
 end-to-end flowchart of the entire lifecycle.
 
-📊 [States And Gates](states-and-gates.mmd) — state machine showing each
-workflow gate and its owner.
+📊 [States And Gates](states-and-gates.mmd) — simplified state machine
+(see [Feature Development Lifecycle](feature-development-lifecycle.mmd) for
+full branching flow with decision gates).
 
 ## Prompt Templates
 

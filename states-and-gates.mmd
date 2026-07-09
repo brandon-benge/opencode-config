@@ -13,20 +13,20 @@ graph TD
     Verified[Verified]:::state
     Closed((Closed)):::terminal
 
-    Start -->|@request-author creates request| Requested
-    Requested -->|@spec-reviewer creates proposal| ArchitectureProposed
-    ArchitectureProposed -->|@architecture-approver auto-approves| Approved
+    Start -->|"@request-author creates request"| Requested
+    Requested -->|"@spec-reviewer creates proposal"| ArchitectureProposed
+    ArchitectureProposed -->|"@architecture-approver auto-approves"| Approved
     ArchitectureProposed -->|Rejected or not pursued| Rejected
-    Approved -->|@implementation-reviewer confirms| ImplementationReviewed
-    ImplementationReviewed -->|@spec-coder codes| Implementing
+    Approved -->|"@implementation-reviewer confirms"| ImplementationReviewed
+    ImplementationReviewed -->|"@spec-coder codes"| Implementing
     Implementing -->|Tests pass| Verified
     Verified -->|Autocommit / merge| Closed
     Rejected --> Start
     Closed --> Start
 
-    Note1[Auto-chain from @request-author]:::note
-    Note2[No human approval prompt needed]:::note
-    Note3[@test-reviewer must pass]:::note
+    Note1["Auto-chain from @request-author"]:::note
+    Note2["No human approval prompt needed"]:::note
+    Note3["@test-reviewer must pass"]:::note
 
     ArchitectureProposed -.- Note1
     Approved -.- Note2

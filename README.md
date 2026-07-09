@@ -133,7 +133,9 @@ You never need to call `@spec-reviewer`, `@architecture-approver`,
 end-to-end flowchart.
 📊 [Agent Responsibility Map](agent-responsibility-map.mmd) — agent roles and
 auto-chain groups.
-📊 [States And Gates](states-and-gates.mmd) — workflow state machine.
+📊 [States And Gates](states-and-gates.mmd) — simplified state machine
+(see [Feature Development Lifecycle](feature-development-lifecycle.mmd) for
+full branching flow with decision gates).
 
 See [`feature-development.md`](feature-development.md) for full details and
 prompt templates.
