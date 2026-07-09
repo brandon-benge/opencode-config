@@ -3,13 +3,13 @@ graph LR
     classDef subagent fill:#fff3e0,stroke:#e65100,stroke-width:1px
     classDef human fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
 
-    BS[@specrepo-bootstrapper]:::primary
-    RA[@request-author]:::primary
-    SR[@spec-reviewer]:::subagent
-    AA[@architecture-approver]:::subagent
-    SC[@spec-coder]:::primary
-    IR[@implementation-reviewer]:::subagent
-    TR[@test-reviewer]:::subagent
+    BS["@specrepo-bootstrapper"]:::primary
+    RA["@request-author"]:::primary
+    SR["@spec-reviewer"]:::subagent
+    AA["@architecture-approver"]:::subagent
+    SC["@spec-coder"]:::primary
+    IR["@implementation-reviewer"]:::subagent
+    TR["@test-reviewer"]:::subagent
     H[Human]:::human
 
     H -->|calls| RA
