@@ -81,7 +81,7 @@ change implementation files under the repository's source or test roots.
 3. Inspect current source and tests only as needed to ground the proposal.
 4. Create an architecture proposal from the repository's proposal template.
 5. State exactly which baseline specs changed, if any.
-6. End by asking for human approval.
+6. End. The architecture proposal is complete.
 
 ## Proposal Quality Bar
 

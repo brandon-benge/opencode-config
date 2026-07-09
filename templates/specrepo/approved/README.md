@@ -1,11 +1,9 @@
 # Approved Architecture
 
-Human-approved architecture records live here.
+Approved architecture records live here.
 
-Use `@architecture-approver` to create approval records after explicit human
-approval. The human approval prompt should name the proposal and ask
-`@architecture-approver` to create the record from
-`specrepo/templates/approval-record.md`.
+`@architecture-approver` creates these records automatically when a proposal
+meets the review criteria. No separate human approval prompt is needed.
 
 Use one subdirectory per approved request:
 
@@ -14,4 +12,5 @@ specrepo/approved/YYYY-MM-DD-short-name/approval.md
 ```
 
 Implementation may begin only after the approval record exists and points to the
-approved proposal.
+approved proposal. Humans stay in control by deciding whether to call
+`@spec-coder`.

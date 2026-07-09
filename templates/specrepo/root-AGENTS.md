@@ -14,23 +14,22 @@ not start implementation until there is an approved architecture record under
 Use the specialized SpecRepo agents for workflow gates when they are available:
 
 - Use `@request-author` to create or refine feature requests in
-  `specrepo/requests/` before architecture work begins.
-- Use `@spec-reviewer` to turn requests in `specrepo/requests/` into
-  architecture proposals in `specrepo/proposals/`.
-- Use `@architecture-approver` to review proposal readiness and, after an
-  explicit human approval prompt, create the approval record.
-- Use `@implementation-reviewer` to create the required implementation review
-  under `specrepo/implementation-reviews/` before code is edited.
+  `specrepo/requests/`. It automatically chains to `@spec-reviewer` then
+  `@architecture-approver`.
 - Use `@spec-coder` only after an approval record and matching implementation
-  review exist.
-- Use `@test-reviewer` after implementation and verification evidence exist to
-  check test coverage and residual risk.
+  review exist. It automatically chains to `@implementation-reviewer` then
+  `@test-reviewer`.
+- Use `@specrepo-bootstrapper` to create the `specrepo/` structure if it does
+  not exist.
 
-Do not rely on a general-purpose coding agent to silently perform missing
-workflow gates. If a required handoff agent is unavailable, follow the same
-gate manually and record that the specialized agent was unavailable.
+You never need to call `@spec-reviewer`, `@architecture-approver`,
+`@implementation-reviewer`, or `@test-reviewer` directly. Call only the primary
+agents (`@request-author`, `@spec-coder`) and let the chain handle the rest.
 
-## Spec Review Path
+If a required handoff agent is unavailable, follow the same gate manually and
+record that the specialized agent was unavailable.
+
+## Request Path
 
 When asked to create or refine a feature request:
 
@@ -46,7 +45,9 @@ When asked to create or refine a feature request:
 6. Stop before architecture. Do not create proposals, approval records,
    implementation reviews, baseline spec updates, or implementation changes.
 
-When asked to review a feature request or update architecture:
+## Proposal Path
+
+When asked to review a feature request or create architecture:
 
 1. Read `specrepo/spec.yaml`, `specrepo/workflow.md`, and the baseline specs in
    `specrepo/specs/`.
@@ -54,28 +55,21 @@ When asked to review a feature request or update architecture:
 3. Create or update an architecture proposal under `specrepo/proposals/`.
 4. Update baseline specs only if the proposed architecture changes the approved
    understanding of the project.
-5. Stop and ask for human approval. Do not implement code.
+5. Stop. The architecture proposal is complete. Do not implement code.
 
 ## Approval Path
 
-When asked to approve architecture:
+The architecture-approver creates the approval record automatically when a
+proposal meets the review criteria. No separate human approval prompt is
+required.
 
 1. Use `@architecture-approver` to review the proposal for approval readiness.
-2. If the recommendation is `approve`, read the proposal and review findings.
-3. If the human approves, send an explicit prompt to `@architecture-approver`:
-
-   ```text
-   @architecture-approver I approve
-   specrepo/proposals/YYYY-MM-DD-short-name/architecture.md.
-
-   Create the approval record using the repository's approval-record template.
-   Name me as the human approver for this opencode session.
-   Conditions: <None, or the exact approval conditions to record>.
-   ```
-
-4. Do not treat an approval-readiness recommendation as approval. The approval
-   record under `specrepo/approved/` is authoritative only after the human
-   sends the explicit approval prompt.
+2. If the recommendation is `approve`, the approval record is created
+   automatically under `specrepo/approved/`.
+3. If the recommendation is `revise` or `reject`, no record is created. Refine
+   the request and re-run the chain.
+4. If the human simply does not like the proposed approach, do not call
+   `@spec-coder`. No implementation should start without an approval record.
 
 ## Implementation Path
 

@@ -1,0 +1,17 @@
+stateDiagram-v2
+    [*] --> Requested: @request-author creates request
+    Requested --> ArchitectureProposed: @spec-reviewer creates proposal
+    ArchitectureProposed --> Approved: @architecture-approver auto-approves
+    ArchitectureProposed --> Rejected: Rejected or not pursued
+
+    Approved --> ImplementationReviewed: @implementation-reviewer confirms
+    ImplementationReviewed --> Implementing: @spec-coder codes
+    Implementing --> Verified: Tests pass
+    Verified --> Closed: Autocommit / merge
+
+    Rejected --> [*]
+    Closed --> [*]
+
+    note right of ArchitectureProposed: Auto-chain from @request-author
+    note right of Approved: No human approval prompt needed
+    note right of Verified: @test-reviewer must pass

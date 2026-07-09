@@ -1,0 +1,82 @@
+graph TD
+    classDef human fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    classDef primary fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    classDef subagent fill:#fff3e0,stroke:#e65100,stroke-width:1px
+    classDef auto fill:#f3e5f5,stroke:#7b1fa2,stroke-width:1px,stroke-dasharray:5 5
+    classDef decision fill:#fff8e1,stroke:#f9a825,stroke-width:2px
+    classDef terminal fill:#fce4ec,stroke:#c62828,stroke-width:2px
+
+    Start((Start)) --> HasSpecRepo{Has specrepo/?}
+    HasSpecRepo -->|No| Bootstrap[Ask @specrepo-bootstrapper]
+    HasSpecRepo -->|Yes| RequestPhase
+
+    Bootstrap --> RequestPhase
+
+    subgraph RequestPhase[Request → Proposal → Approval]
+        RequestAuthor[Call @request-author]:::primary
+        SpecReviewer[→ @spec-reviewer creates proposal]:::subagent
+        ArchApprover[→ @architecture-approver reviews]:::subagent
+        AutoApproval[Auto-creates approval record]:::auto
+        ReviseReject[Returns revise / reject]:::decision
+
+        RequestAuthor --> SpecReviewer
+        SpecReviewer --> ArchApprover
+        ArchApprover -->|approve| AutoApproval
+        ArchApprover -->|revise / reject| ReviseReject
+    end
+
+    AutoApproval --> HumanReview
+
+    subgraph HumanGate[Human Review]
+        HumanReview{Review proposal}:::human
+        Satisfied{Satisfied?}:::decision
+        NotSatisfied{Not satisfied?}:::decision
+
+        HumanReview --> Satisfied
+        HumanReview --> NotSatisfied
+    end
+
+    Satisfied -->|Yes - call @spec-coder| ImplPhase
+    NotSatisfied -->|No - stop here| StopImpl((Stop)):::terminal
+
+    ReviseReject --> StopRev((Stop)):::terminal
+
+    subgraph ImplPhase[Implementation → Test Review]
+        SpecCoder[Call @spec-coder]:::primary
+        ImplReview[→ @implementation-reviewer]:::subagent
+        ImplGate{Proceed or Stop?}:::decision
+        Implement[Implement within scope]:::primary
+        Verify[Run verification]:::primary
+        TestReviewer[→ @test-reviewer]:::subagent
+        TestResult{Result}:::decision
+        FixTests[Fix and re-run]:::primary
+        Autocommit[Autocommit hook]:::auto
+
+        SpecCoder --> ImplReview
+        ImplReview --> ImplGate
+        ImplGate -->|Proceed| Implement
+        ImplGate -->|Stop for revised architecture| StopArch((Stop)):::terminal
+        Implement --> Verify
+        Verify --> TestReviewer
+        TestReviewer --> TestResult
+        TestResult -->|pass| Autocommit
+        TestResult -->|needs more tests| FixTests
+        FixTests --> Verify
+        TestResult -->|blocked| StopBlock((Stop)):::terminal
+    end
+
+    Autocommit --> FinalReview
+
+    subgraph MergePhase[Final Review]
+        FinalReview[Review diff and summary]:::human
+        Merge{Ready to merge?}:::decision
+        FinalMerge((Merge)):::terminal
+
+        FinalReview --> Merge
+        Merge -->|Yes| FinalMerge
+        Merge -->|No| Reject((Don't merge)):::terminal
+    end
+
+    StopImpl -.->|Optionally| RequestPhase
+    StopRev -.->|Refine| RequestPhase
+    StopArch -.->|Request revised| RequestPhase

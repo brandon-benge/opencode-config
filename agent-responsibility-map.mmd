@@ -1,0 +1,42 @@
+graph LR
+    classDef primary fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    classDef subagent fill:#fff3e0,stroke:#e65100,stroke-width:1px
+    classDef human fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+
+    BS[@specrepo-bootstrapper]:::primary
+    RA[@request-author]:::primary
+    SR[@spec-reviewer]:::subagent
+    AA[@architecture-approver]:::subagent
+    SC[@spec-coder]:::primary
+    IR[@implementation-reviewer]:::subagent
+    TR[@test-reviewer]:::subagent
+    H[Human]:::human
+
+    H -->|calls| RA
+    H -->|calls| SC
+    H -->|calls once| BS
+
+    RA -->|auto-chains to| SR
+    SR -->|auto-chains to| AA
+
+    SC -->|auto-chains to| IR
+    SC -->|auto-chains to| TR
+
+    RA -.->|creates| Request[Request file]
+    SR -.->|creates| Proposal[Architecture proposal]
+    AA -.->|auto-creates| Approval[Approval record]
+    IR -.->|creates| ImplReview[Implementation review]
+    SC -.->|implements| Code[Code + tests]
+    TR -.->|reviews| Review[Test review]
+
+    subgraph AutoChain1[Automatic Chain 1]
+        RA
+        SR
+        AA
+    end
+
+    subgraph AutoChain2[Automatic Chain 2]
+        SC
+        IR
+        TR
+    end

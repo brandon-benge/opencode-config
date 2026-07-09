@@ -18,8 +18,8 @@ as `source_roots`, `test_roots`, workflow directories, and `commands.test`.
 ## Purpose And Prerequisites
 
 Use this workflow when a change should move through request, architecture,
-human approval, implementation review, implementation, verification, and merge
-without losing the decision trail.
+automatic approval, implementation review, implementation, verification, and
+merge without losing the decision trail.
 
 The target repository should have:
 
@@ -48,34 +48,48 @@ primary agents; the handoffs happen in the background.
 | Role | Mode | Responsibility | Handles |
 | --- | --- | --- | --- |
 | `@specrepo-bootstrapper` | primary | Creates a complete repo-specific SpecRepo structure when a repository does not have one yet. | One-time setup |
-| `@request-author` | primary | Creates or refines one request, then **auto-chains** to `@spec-reviewer` then `@architecture-approver`. | Request → Proposal → Readiness review |
+| `@request-author` | primary | Creates or refines one request, then **auto-chains** to `@spec-reviewer` then `@architecture-approver`. | Request → Proposal → Auto-approval → Summary |
 | `@spec-reviewer` | subagent | Turns one request into an architecture proposal and any justified baseline spec updates. | Called by `@request-author` |
-| `@architecture-approver` | subagent | Reviews proposal readiness. Writes an approval record only after explicit human approval. | Called by `@request-author` |
-| Human approver | — | Owns the final architecture approval decision. | Reviews proposal, sends approval prompt |
+| `@architecture-approver` | subagent | Reviews proposal readiness. Creates the approval record automatically when the proposal meets the criteria. | Called by `@request-author` |
 | `@spec-coder` | primary | Implements the approved scope, **auto-chains** to `@implementation-reviewer` if needed, then to `@test-reviewer`. | Impl. review → Code → Test review |
 | `@implementation-reviewer` | subagent | Creates the pre-code implementation review and decides `Proceed` or `Stop for revised architecture`. | Called by `@spec-coder` |
 | `@test-reviewer` | subagent | Reviews tests, verification evidence, and scope compliance without editing files. | Called by `@spec-coder` |
-| Human merger | — | Reviews the final diff and decides whether to merge. | Final review |
+
+Only call the primary agents: `@specrepo-bootstrapper`, `@request-author`, and
+`@spec-coder`. The subagents (`@spec-reviewer`, `@architecture-approver`,
+`@implementation-reviewer`, `@test-reviewer`) are invoked automatically by the
+chain and should never be called directly.
+
+📊 [Agent Responsibility Map](agent-responsibility-map.mmd) — visual reference
+for the agent roles, relationships, and auto-chain groups.
 
 ## End-To-End Lifecycle
 
 Primary agents chain to subagents automatically. You only need to call the
-primary agents and make human decisions at the gates.
+primary agents at the right time.
 
 1. **Bootstrap** — Create `specrepo/` with `@specrepo-bootstrapper` if it does
    not exist.
-2. **Request + Proposal + Readiness** — Ask `@request-author` to create or
+2. **Request + Proposal + Approval** — Ask `@request-author` to create or
    refine the feature request. It automatically delegates to `@spec-reviewer`
-   (architecture proposal) then `@architecture-approver` (readiness review).
-3. **Human approval** — Review the proposal and architecture-approver
-   recommendation. If satisfied, send the approval prompt to
-   `@architecture-approver` to create the approval record.
+   (architecture proposal) then `@architecture-approver` (review and automatic
+   approval record creation if criteria are met).
+3. **Review and decide** — Read the proposal and architecture-approver
+   recommendation. If the recommendation is `approve` and you are satisfied,
+   proceed. If `revise` or `reject`, or if you simply do not like the result,
+   stop here — do not call `@spec-coder`.
 4. **Implement** — Ask `@spec-coder` to implement the approved scope. It
    automatically delegates to `@implementation-reviewer` (review gate) if
    needed, then `@test-reviewer` (verification review) after coding.
 5. **Final review** — Review the implementation summary, git diff, and
    `@test-reviewer` recommendation (`pass` / `needs more tests` / `blocked`).
 6. **Merge** — Merge when verification evidence exists and you are satisfied.
+
+📊 [Feature Development Lifecycle](feature-development-lifecycle.mmd) —
+end-to-end flowchart of the entire lifecycle.
+
+📊 [States And Gates](states-and-gates.mmd) — state machine showing each
+workflow gate and its owner.
 
 ## Prompt Templates
 
@@ -112,11 +126,11 @@ Human gate:
 - Confirm the inferred project facts before using the generated SpecRepo for
   feature work.
 
-### 1. Request → Proposal → Readiness (One Prompt)
+### 1. Request → Proposal → Approval (One Prompt)
 
 Call `@request-author` once. It creates the request, then automatically chains
 to `@spec-reviewer` (architecture proposal) and `@architecture-approver`
-(readiness review).
+(review and automatic approval record creation).
 
 ```text
 @request-author Create or refine this SpecRepo request at
@@ -143,51 +157,26 @@ Non-goals:
 | --- | --- | --- |
 | 1 | `@request-author` | `specrepo/requests/[request-name].md` |
 | 2 | → `@spec-reviewer` (auto) | `specrepo/proposals/YYYY-MM-DD-[name]/architecture.md` |
-| 3 | → `@architecture-approver` (auto) | Readiness recommendation: `approve` / `revise` / `reject` |
+| 3 | → `@architecture-approver` (auto) | Readiness recommendation and auto-created approval record at `specrepo/approved/YYYY-MM-DD-[name]/approval.md` |
 
 Expected output:
 
 - Request file with acceptance criteria, constraints, and non-goals.
 - Architecture proposal with scope, test plan, and approval conditions.
-- Readiness review with blocking issues and approval conditions.
+- Approval record (if the proposal was approved).
 
 Human gate:
 
-- Confirm the request describes the intended change.
-- Read the proposal and decide whether it matches the request.
-- If `revise` or `reject`, send the proposal back to `@spec-reviewer`.
+- Read the proposal and architecture-approver recommendation.
+- If satisfied, call `@spec-coder` to implement.
+- If `revise` or `reject`, ask `@request-author` to re-run with a clearer
+  request.
+- If you simply do not like the proposed approach, do not call `@spec-coder`.
 
-### 2. Human Approval And Approval Record
+### 2. Implementation → Test Review (One Prompt)
 
-Only create an approval record after you explicitly approve. The
-architecture-approver's `approve` recommendation is not final approval.
-
-```text
-@architecture-approver I approve
-specrepo/proposals/YYYY-MM-DD-[short-name]/architecture.md.
-
-Create the approval record using the repository's approval-record template.
-Name me as the human approver for this opencode session.
-Conditions: [None, or the exact approval conditions to record].
-```
-
-Expected output:
-
-- `specrepo/approved/YYYY-MM-DD-[short-name]/approval.md`
-- The approval record references the approved proposal.
-- The approval record names the human approver or states that the user approved
-  it in the current opencode session.
-- The approval record preserves any approval conditions from the prompt.
-
-Human gate:
-
-- Verify the approval record points to the intended proposal and conditions.
-- Implementation must not start until this record exists.
-
-### 3. Implementation → Test Review (One Prompt)
-
-Call `@spec-coder` once. It automatically chains to `@implementation-reviewer`
-if needed, implements, then chains to `@test-reviewer`.
+Call `@spec-coder` once. It checks that the approval record and implementation
+review exist, implements, then chains to `@test-reviewer`.
 
 ```text
 @spec-coder Implement the approved change described by
@@ -219,7 +208,7 @@ Human gate:
 - Do not merge until verification evidence exists and test review passes or
   any residual risk is explicitly accepted.
 
-### 4. Final Diff And Merge
+### 3. Final Diff And Merge
 
 Use the normal primary opencode session or your own shell for final commands.
 
@@ -245,7 +234,8 @@ Human gate:
 
 - Keep each request focused on one user-visible change.
 - Put ambiguity in the request before architecture starts.
-- Treat approval as a human decision, not an agent decision.
+- The architecture-approver approves automatically; you stay in control by
+  choosing whether to call `@spec-coder`.
 - Do not let implementation start before both approval and implementation
   review exist (handled automatically by `@spec-coder`).
 - Keep proposal names, approval names, and implementation review names aligned.
@@ -275,21 +265,21 @@ desired behavior, acceptance criteria, constraints, and non-goals are concrete.
 
 The proposal was created by `@spec-reviewer` as part of the `@request-author`
 chain. Ask `@request-author` to re-run with a clearer request, or directly
-prompt `@spec-reviewer` to revise. Do not approve a proposal with missing
-behavior, vague tests, or hidden scope expansion.
+prompt `@spec-reviewer` to revise. Do not proceed to implementation when the
+proposal has missing behavior, vague tests, or hidden scope expansion.
 
-### Approval Review Says `revise` Or `reject`
+### Architecture-Approver Says `revise` Or `reject`
 
-Do not create an approval record. Ask `@request-author` to re-run the chain
-with a refined request, or directly prompt `@spec-reviewer` to revise the
-proposal, then `@architecture-approver` to re-review.
+No approval record was created. Ask `@request-author` to re-run the chain with
+a refined request, or directly prompt `@spec-reviewer` to revise the proposal,
+then `@architecture-approver` to re-review.
 
 ### Implementation Review Says `Stop for revised architecture`
 
 `@spec-coder` will report this automatically and stop. Ask
 `@request-author` to start a new chain with the blocker information, or
-directly ask `@spec-reviewer` for revised architecture, then obtain a new
-human approval before resuming.
+directly ask `@spec-reviewer` for revised architecture. A revised proposal
+needs a new approval from `@architecture-approver` before resuming.
 
 ### `@spec-coder` Finds A Material Architecture Change
 

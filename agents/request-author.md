@@ -114,8 +114,7 @@ workflow automatically:
 specrepo/requests/<request-name>.md.
 
 Read specrepo/spec.yaml first. Inspect source and tests only as needed to
-ground the proposal. End by listing any baseline spec changes and asking for
-human approval.
+ground the proposal. End by listing any baseline spec changes.
 ```
 
 ### 2. Delegate to `@architecture-approver`
@@ -126,9 +125,8 @@ After `@spec-reviewer` returns, delegate to `@architecture-approver`:
 @architecture-approver Review
 specrepo/proposals/<proposal-dir>/architecture.md for approval readiness.
 
-Do not create an approval record yet. Return a decision recommendation of
-approve, revise, or reject with blocking issues, non-blocking suggestions, and
-approval conditions.
+If the proposal meets the review criteria, create the approval record
+automatically using the repository's approval-record template.
 ```
 
 ### 3. Summarize for Human
@@ -137,12 +135,10 @@ Present a clean summary:
 
 - Request file: `specrepo/requests/<request-name>.md`
 - Proposal file: `specrepo/proposals/<date>-<name>/architecture.md`
+- Approval record: `specrepo/approved/<date>-<name>/approval.md` (if approved)
 - Architecture-approver recommendation: `approve` / `revise` / `reject`
 - Any blocking issues or follow-up needed
-- Next action for the human (e.g., "Review and send approval prompt")
-
-Do not create the approval record yourself. That requires explicit human
-approval.
+- Next action for the human (e.g., "Review the proposal and, if satisfied, ask `@spec-coder` to implement")
 
 ## Request Quality Bar
 

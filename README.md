@@ -117,18 +117,34 @@ as VCS internals and build outputs.
 
 ## Recommended Workflow
 
+Primary agents chain to subagents automatically. You only need to call the
+primary agents; handoffs happen in the background.
+
 1. If the target repository has no `specrepo/`, ask `@specrepo-bootstrapper`
    to create it.
 2. Ask `@request-author` to create or refine a request in
-   `specrepo/requests/`.
-3. Ask `@spec-reviewer` to create the architecture proposal.
-4. Review the proposal yourself.
-5. Ask `@architecture-approver` for an approval-readiness review.
-6. When you approve, create or ask for an approval record in
-   `specrepo/approved/`.
-7. Ask `@implementation-reviewer` to create the pre-code implementation review.
-8. Use `@spec-coder` to implement within the approved scope.
-9. Ask `@test-reviewer` to review test coverage and verification evidence.
+   `specrepo/requests/`. It automatically delegates to `@spec-reviewer`
+   (architecture proposal) then `@architecture-approver` (review and approval
+   record creation).
+3. Review the proposal and architecture-approver recommendation. If satisfied,
+   ask `@spec-coder` to implement. If not, stop here.
+4. `@spec-coder` automatically delegates to `@implementation-reviewer` if
+   needed, implements, runs verification, then chains to `@test-reviewer`
+   for a test-coverage review.
+5. Review the implementation summary and git diff. Merge when ready.
+
+You never need to call `@spec-reviewer`, `@architecture-approver`,
+`@implementation-reviewer`, or `@test-reviewer` directly. Call only
+`@request-author` and `@spec-coder`.
+
+📊 [Feature Development Lifecycle](feature-development-lifecycle.mmd) —
+end-to-end flowchart.
+📊 [Agent Responsibility Map](agent-responsibility-map.mmd) — agent roles and
+auto-chain groups.
+📊 [States And Gates](states-and-gates.mmd) — workflow state machine.
+
+See [`feature-development.md`](feature-development.md) for full details and
+prompt templates.
 
 ## Files
 
@@ -137,7 +153,7 @@ as VCS internals and build outputs.
 | `agents/specrepo-bootstrapper.md` | Creates a complete repo-specific SpecRepo structure and root `AGENTS.md` from reusable templates. |
 | `agents/request-author.md` | Creates or refines feature requests before architecture work begins. |
 | `agents/spec-reviewer.md` | Turns requests into architecture proposals. |
-| `agents/architecture-approver.md` | Reviews proposals before human approval. |
+| `agents/architecture-approver.md` | Reviews proposals and creates approval records automatically. |
 | `agents/implementation-reviewer.md` | Reviews approved architecture before code changes. |
 | `agents/spec-coder.md` | Implements only after approval and implementation review exist. |
 | `agents/test-reviewer.md` | Reviews tests and verification evidence. |
