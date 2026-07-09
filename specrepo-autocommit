@@ -50,4 +50,5 @@ exec autocommit \
   --keychain \
   --keychain-service "langchain_autocommit" \
   --keychain-key "opencode_api_key" \
+  --yes
   -c "$summary"
