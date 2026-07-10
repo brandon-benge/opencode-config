@@ -120,3 +120,62 @@ required_gates:
     spec_ref: quality.md §Documentation Rules
 commands:
   test: <default verification command or "">
+
+agent_handoffs:
+  - id: request_to_spec
+    from: request-author
+    to: spec-reviewer
+    automation: auto
+  - id: spec_to_approver
+    from: spec-reviewer
+    to: architecture-approver
+    automation: auto
+  - id: approver_to_human
+    from: architecture-approver
+    to: human
+    automation: human_decision
+    instruction: >
+      Review the approval recommendation (approve / revise / reject).
+      If approved, call @spec-coder with the approval record to start
+      implementation. If revise/reject, refine the request and re-run.
+  - id: human_to_coder
+    from: human
+    to: spec-coder
+    automation: manual
+    instruction: Human invokes @spec-coder with the approval record to
+      begin implementation.
+  - id: coder_to_impl_reviewer
+    from: spec-coder
+    to: implementation-reviewer
+    automation: auto
+    condition: No implementation review exists yet
+  - id: impl_reviewer_to_coder
+    from: implementation-reviewer
+    to: spec-coder
+    automation: auto
+    condition: Review decision is "Proceed"
+  - id: impl_reviewer_to_human
+    from: implementation-reviewer
+    to: human
+    automation: human_decision
+    instruction: >
+      Review decision is "Stop for revised architecture". The
+      approved proposal is not implementable. Revise the architecture
+      proposal or abandon the change.
+  - id: coder_to_test_reviewer
+    from: spec-coder
+    to: test-reviewer
+    automation: auto
+    condition: All required verification passes
+  - id: test_reviewer_to_coder
+    from: test-reviewer
+    to: spec-coder
+    automation: auto
+    condition: Recommendation is "pass" or "needs more tests"
+  - id: test_reviewer_to_human
+    from: test-reviewer
+    to: human
+    automation: human_decision
+    instruction: >
+      Test review recommendation is "blocked". Review the blocking
+      issues and decide how to proceed.

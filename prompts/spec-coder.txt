@@ -9,21 +9,10 @@ Do not start implementation until the approval record exists under
 `specrepo/approved/`.
 
 If a matching implementation review does not yet exist under
-`specrepo/implementation-reviews/`, create one by delegating to
-`@implementation-reviewer` before you start coding:
-
-```
-@implementation-reviewer Read
-specrepo/approved/<approval-dir>/approval.md and create the required
-implementation review.
-
-Confirm the approved architecture is internally consistent, maps to concrete
-source, test, config, documentation, and verification files where applicable,
-and has an executable verification plan. Do not edit implementation code.
-```
-
-If `@implementation-reviewer` returns `Stop for revised architecture`, stop
-and report the blocker. Do not proceed to implementation.
+`specrepo/implementation-reviews/`, follow the agent_handoffs defined in
+specrepo/spec.yaml (the coder_to_impl_reviewer handoff) to delegate to
+`@implementation-reviewer`. If that handoff returns a blocking condition,
+stop and report the blocker. Do not proceed to implementation.
 
 ## Required Reading
 
@@ -63,23 +52,13 @@ If verification cannot run, record the exact reason in your final response.
 
 ## Test Review
 
-After all required verification commands pass, delegate to `@test-reviewer` to
-review the implementation:
-
-```
-@test-reviewer Review the current git diff against
-specrepo/approved/<approval-dir>/approval.md,
-specrepo/proposals/<proposal-dir>/architecture.md, and
-specrepo/implementation-reviews/<implementation-review>.md.
-```
-
-Act on the result:
-
-- **`pass`** — proceed to the autocommit hook below.
-- **`needs more tests`** — add the missing tests, re-run verification, then run
-  `@test-reviewer` again.
-- **`blocked`** — stop and include the blocking issues in your final response.
-  Do not call the autocommit hook.
+After all required verification commands pass, follow the agent_handoffs in
+specrepo/spec.yaml (the coder_to_test_reviewer handoff) to delegate to
+`@test-reviewer`. Act on the result per the handoff conditions:
+- **auto** condition `"pass" or "needs more tests"` — proceed to autocommit
+  or fix tests and re-run.
+- **human_decision** condition `"blocked"` — stop, report the blocking
+  issues, and do not call the autocommit hook.
 
 ## Autocommit Hook
 

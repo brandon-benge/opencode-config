@@ -16,11 +16,14 @@ graph LR
     H -->|calls| SC
     H -->|calls once| BS
 
-    RA -->|auto-chains to| SR
-    SR -->|auto-chains to| AA
+    RA -->|"[auto]"| SR
+    SR -->|"[auto]"| AA
+    AA -->|"[human_decision]"| H
 
-    SC -->|auto-chains to| IR
-    SC -->|auto-chains to| TR
+    SC -->|"[auto]"| IR
+    IR -->|"[human_decision]"| H
+    SC -->|"[auto]"| TR
+    TR -->|"[human_decision]"| H
 
     RA -.->|creates| Request[Request file]
     SR -.->|creates| Proposal[Architecture proposal]

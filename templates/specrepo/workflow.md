@@ -35,20 +35,20 @@ Gate definitions (check type, pattern, spec reference) are in
 
 ## Agent Handoffs
 
-Use specialized SpecRepo agents for the workflow gates when they are available:
+Agent chaining is defined in `specrepo/spec.yaml` under `agent_handoffs`.
+Each handoff is either:
 
-- `@request-author` owns creating or refining request files in
-  `specrepo/requests/` before architecture work begins.
-- `@spec-reviewer` owns the transition from `requested` to
-  `architecture_proposed`.
-- `@architecture-approver` reviews proposal readiness and creates the approval
-  record automatically when the proposal meets the review criteria.
-- `@implementation-reviewer` owns the transition from `approved` to
-  `implementation_reviewed`.
-- `@spec-coder` owns implementation after approval and implementation review
-  gates are satisfied.
-- `@test-reviewer` reviews coverage and verification evidence after
-  implementation and before closeout when available.
+- `auto` — continue to the next agent directly.
+- `human_decision` — stop and tell the human what action is required.
+
+The agents that participate in the workflow are:
+
+- `@request-author` — creates or refines request files in `specrepo/requests/`.
+- `@spec-reviewer` — creates architecture proposals.
+- `@architecture-approver` — reviews proposals and auto-creates approval records.
+- `@implementation-reviewer` — reviews approved proposals for implementability.
+- `@spec-coder` — implements approved changes.
+- `@test-reviewer` — reviews tests and verification evidence.
 
 Primary agents must not skip missing gate artifacts. If a required specialized
 agent is unavailable, the primary agent must follow the same gate manually and
@@ -117,10 +117,10 @@ The approval record must include:
 - Approved scope.
 - Any conditions or required follow-up.
 
-Humans stay in control by deciding whether to call `@spec-coder` for
-implementation. If the architecture-approver returns `revise` or `reject`, or
-if the human simply does not like the proposed approach, no implementation
-should start.
+After approval, the human_decision handoff (approver_to_human in
+specrepo/spec.yaml) stops and tells the human to review the recommendation.
+If the architecture-approver returns `revise` or `reject`, or if the human
+simply does not like the proposed approach, no implementation should start.
 
 Implementation may not begin without an approval record.
 
@@ -131,8 +131,9 @@ It checks that an approval record exists at
 
 ## Coding-Agent Architecture Review
 
-Before editing code, use `@implementation-reviewer` to create an implementation
-review from `specrepo/templates/implementation-review.md` under
+Before editing code, follow the coder_to_impl_reviewer handoff in
+specrepo/spec.yaml to create an implementation review from
+`specrepo/templates/implementation-review.md` under
 `specrepo/implementation-reviews/YYYY-MM-DD-short-name.md`.
 
 The review must confirm:
@@ -143,8 +144,8 @@ The review must confirm:
 - Any unresolved issue is marked as a blocker.
 
 If the implementation review finds that the approved architecture is incomplete
-or unsafe, implementation stops and returns to the proposal workflow instead of
-changing code.
+or unsafe, the impl_reviewer_to_human handoff stops and tells the human what
+action is required instead of changing code.
 
 **Gates:** The `implementation_review_exists` and `test_plan_exists` gates
 (defined in `specrepo/spec.yaml`) must pass for the workflow to enter the
@@ -178,5 +179,5 @@ After all required verification commands pass, implementation agents should run
 final command. Do not run the hook when verification fails, is skipped, or
 cannot run. The hook blocks autocommit on `main`.
 
-Use `@test-reviewer` to review the implemented diff, tests, and verification
-evidence before closing the change when that agent is available.
+Before closing, follow the coder_to_test_reviewer handoff in specrepo/spec.yaml
+to review the implemented diff, tests, and verification evidence.

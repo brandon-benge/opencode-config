@@ -54,8 +54,6 @@ Use the repository's approval-record template. The approval record must include:
 - Approval decision.
 - Approved scope.
 - Any approval conditions from the review.
-- The human as the ultimate decision-maker (the human decides whether to call
-  `@spec-coder` later).
 
 When the recommendation is `revise` or `reject`, do not create the approval
 record. Report the blocking issues so the request can be refined.

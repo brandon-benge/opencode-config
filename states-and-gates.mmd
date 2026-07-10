@@ -13,14 +13,14 @@ graph TD
     Verified[Verified]:::state
     Closed((Closed)):::terminal
 
-    Start -->|"@request-author creates request"| Requested
-    Requested -->|"@spec-reviewer creates proposal"| ArchitectureProposed
-    ArchitectureProposed -->|"@architecture-approver auto-approves"| Approved
-    ArchitectureProposed -->|Rejected or not pursued| Rejected
-    Approved -->|"@implementation-reviewer confirms"| ImplementationReviewed
+    Start -->|"@request-author creates request [auto]"| Requested
+    Requested -->|"@spec-reviewer creates proposal [auto]"| ArchitectureProposed
+    ArchitectureProposed -->|"@architecture-approver approves [auto]"| Approved
+    ArchitectureProposed -->|"Rejected or not pursued [human_decision]"| Rejected
+    Approved -->|"@implementation-reviewer confirms [auto]"| ImplementationReviewed
     ImplementationReviewed -->|"@spec-coder codes"| Implementing
-    Implementing -->|Tests pass| Verified
-    Verified -->|Autocommit / merge| Closed
+    Implementing -->|"Tests pass"| Verified
+    Verified -->|"Autocommit / merge"| Closed
     Rejected --> Start
     Closed --> Start
 

@@ -19,13 +19,13 @@ graph TD
         AutoApproval[Auto-creates approval record]:::auto
         ReviseReject[Returns revise / reject]:::decision
 
-        RequestAuthor --> SpecReviewer
-        SpecReviewer --> ArchApprover
+        RequestAuthor -->|[auto]| SpecReviewer
+        SpecReviewer -->|[auto]| ArchApprover
         ArchApprover -->|approve| AutoApproval
         ArchApprover -->|revise / reject| ReviseReject
     end
 
-    AutoApproval --> HumanReview
+    AutoApproval -->|[human_decision]| HumanReview
 
     subgraph HumanGate[Human Review]
         HumanReview{Review proposal}:::human
@@ -53,18 +53,18 @@ graph TD
         FixTests[Fix and re-run]:::primary
         Autocommit[Autocommit: git commit]:::auto
 
-        SpecCoder --> ImplReview
+        SpecCoder -->|[auto]| ImplReview
         ImplReview --> ImplGate
-        ImplGate -->|Proceed| Implement
-        ImplGate -->|Stop for revised architecture| StopArch((Stop)):::terminal
+        ImplGate -->|Proceed [auto]| Implement
+        ImplGate -->|Stop for revised architecture [human_decision]| StopArch((Stop)):::terminal
         Implement --> UpdateSpecs
         UpdateSpecs --> Verify
-        Verify --> TestReviewer
+        Verify -->|[auto]| TestReviewer
         TestReviewer --> TestResult
-        TestResult -->|pass| Autocommit
-        TestResult -->|needs more tests| FixTests
+        TestResult -->|pass [auto]| Autocommit
+        TestResult -->|needs more tests [auto]| FixTests
         FixTests -->|retry| Verify
-        TestResult -->|blocked| StopBlock((Stop)):::terminal
+        TestResult -->|blocked [human_decision]| StopBlock((Stop)):::terminal
     end
 
     Autocommit --> FinalReview

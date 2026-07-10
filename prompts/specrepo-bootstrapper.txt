@@ -82,7 +82,9 @@ AGENTS.md
    source roots, test roots, package metadata, default config files, and likely
    verification commands.
 2. Create `specrepo/spec.yaml` from the template and fill project-specific
-   fields.
+   fields. The template already includes the `agent_handoffs` section; preserve
+   it as-is — only project-specific fields under `project:`, `source_roots:`,
+   `test_roots:`, and `commands:` should change.
 3. Create `specrepo/workflow.md`, preserving the reusable gates while adapting
    command names or local policy only where needed.
 4. Create baseline specs under `specrepo/specs/` with repo-specific product,

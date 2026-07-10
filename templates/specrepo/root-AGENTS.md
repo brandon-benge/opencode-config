@@ -11,23 +11,17 @@ not start implementation until there is an approved architecture record under
 
 ## Agent Handoffs
 
-Use the specialized SpecRepo agents for workflow gates when they are available:
+Use the specialized SpecRepo agents for workflow gates when they are available.
+Agent chaining is defined in `specrepo/spec.yaml` under `agent_handoffs`:
 
-- Use `@request-author` to create or refine feature requests in
-  `specrepo/requests/`. It automatically chains to `@spec-reviewer` then
-  `@architecture-approver`.
-- Use `@spec-coder` only after an approval record and matching implementation
-  review exist. It automatically chains to `@implementation-reviewer` then
-  `@test-reviewer`.
-- Use `@specrepo-bootstrapper` to create the `specrepo/` structure if it does
-  not exist.
+- `auto` handoffs run automatically to the next agent.
+- `human_decision` handoffs stop and tell the reviewer what action is required.
 
-You never need to call `@spec-reviewer`, `@architecture-approver`,
-`@implementation-reviewer`, or `@test-reviewer` directly. Call only the primary
-agents (`@request-author`, `@spec-coder`) and let the chain handle the rest.
-
-If a required handoff agent is unavailable, follow the same gate manually and
-record that the specialized agent was unavailable.
+Primary agents (`@request-author`, `@spec-coder`) call the chain; you never
+need to call `@spec-reviewer`, `@architecture-approver`,
+`@implementation-reviewer`, or `@test-reviewer` directly unless a handoff
+agent is unavailable. If unavailable, follow the same gate manually and record
+that the specialized agent was unavailable.
 
 ## Request Path
 
@@ -74,13 +68,14 @@ required.
 
 ## Implementation Path
 
-When asked to implement an approved change:
+When asked to implement an approved change, follow the agent_handoffs in
+`specrepo/spec.yaml`. In summary:
 
 1. Read the approval record under `specrepo/approved/`.
 2. Read the approved proposal referenced by that approval record.
 3. Read the current baseline specs in `specrepo/specs/`.
-4. Use `@implementation-reviewer` to create or verify the implementation review
-   under `specrepo/implementation-reviews/`.
+4. Follow the coder_to_impl_reviewer handoff to create or verify the
+   implementation review.
 5. Implement only within the approved scope.
 6. If implementation changed user-visible behavior, update the affected baseline
    specs. The approved proposal's Baseline Spec Updates section indicates which
@@ -90,8 +85,8 @@ When asked to implement an approved change:
    `$HOME/.config/opencode/specrepo-autocommit` with a four-line summary as the
    final command. Do not run it when verification fails, is skipped, or cannot
    run. The hook blocks autocommit on `main`.
-9. Use `@test-reviewer` to review coverage and verification evidence before
-   closing the change.
+9. Follow the coder_to_test_reviewer handoff to review coverage and verification
+   evidence before closing the change.
 
 If the approved architecture is incomplete, inconsistent, or requires material
 changes during implementation, stop and return to the proposal workflow.
