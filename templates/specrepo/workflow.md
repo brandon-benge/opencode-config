@@ -16,16 +16,22 @@ project facts, gates, decisions, templates, and verification commands belong in
 
 ## State Machine
 
-| State | Directory | Owner | Exit Criteria |
-| --- | --- | --- | --- |
-| `requested` | `requests/` | Request author, normally `@request-author` | Feature request is clear enough to review. |
-| `architecture_proposed` | `proposals/` | Spec reviewer | Proposal explains product, architecture, tests, and risks. |
-| `approved` | `approved/` | Architecture-approver | Approval record points to the accepted proposal (auto-created when criteria are met). |
-| `implementation_reviewed` | `implementation-reviews/` | Implementation reviewer | Approved architecture is confirmed implementable. |
-| `implementation_reviewed` | `implementation-reviews/` | Implementation reviewer | Approved architecture is confirmed implementable. |
-| `implementing` | source tree | Coding agent | Code and tests are updated within approved scope. |
-| `verified` | source tree | Coding agent | Test results or verification exceptions are recorded. |
-| `closed` | `approved/` | Human or coding agent | Final status and changed files are recorded. |
+Each state's transition is governed by deterministic gates defined in
+`specrepo/spec.yaml` under `required_gates`. Entry gates must pass before the
+state is reached; exit gates must pass before the state is left.
+
+| State | Directory | Owner | Entry Gates | Exit Gates |
+| --- | --- | --- | --- | --- |
+| `requested` | `requests/` | Request author, normally `@request-author` | — | `request_file_exists` |
+| `architecture_proposed` | `proposals/` | Spec reviewer | `request_file_exists`, `current_specs_read` | `approved_architecture_exists` |
+| `approved` | `approved/` | Architecture-approver | `approved_architecture_exists` | `implementation_review_exists` |
+| `implementation_reviewed` | `implementation-reviews/` | Implementation reviewer | `approved_architecture_exists`, `implementation_review_exists`, `test_plan_exists` | — |
+| `implementing` | source tree | Coding agent | `approved_architecture_exists`, `implementation_review_exists`, `test_plan_exists` | — |
+| `verified` | source tree | Coding agent | `tests_run_or_exception_recorded` | `specs_updated_if_behavior_changed` |
+| `closed` | `approved/` | Human or coding agent | `specs_updated_if_behavior_changed` | — |
+
+Gate definitions (check type, pattern, spec reference) are in
+`specrepo/spec.yaml` under `required_gates`.
 
 ## Agent Handoffs
 
@@ -68,6 +74,10 @@ The request must include:
 - Constraints or non-goals.
 - Any known compatibility concerns.
 
+**Gate:** The `request_file_exists` gate (defined in `specrepo/spec.yaml`) must
+pass for the workflow to leave the `requested` state. It checks that at least
+one file matching `specrepo/requests/*.md` exists.
+
 ## Architecture Proposal
 
 The spec reviewer, normally `@spec-reviewer`, processes one request at a time.
@@ -83,6 +93,10 @@ Required actions:
 5. Stop. The architecture proposal is complete. Do not implement code.
 
 The proposal must state whether baseline specs were changed.
+
+**Gate:** The `current_specs_read` gate (defined in `specrepo/spec.yaml`) must
+pass for the workflow to enter the `architecture_proposed` state. It checks
+that all four baseline spec files exist under `specrepo/specs/`.
 
 ## Automatic Approval
 
@@ -109,6 +123,11 @@ should start.
 
 Implementation may not begin without an approval record.
 
+**Gate:** The `approved_architecture_exists` gate (defined in
+`specrepo/spec.yaml`) must pass for the workflow to enter the `approved` state.
+It checks that an approval record exists at
+`specrepo/approved/*/approval.md`.
+
 ## Coding-Agent Architecture Review
 
 Before editing code, use `@implementation-reviewer` to create an implementation
@@ -125,6 +144,13 @@ The review must confirm:
 If the implementation review finds that the approved architecture is incomplete
 or unsafe, implementation stops and returns to the proposal workflow instead of
 changing code.
+
+**Gates:** The `implementation_review_exists` and `test_plan_exists` gates
+(defined in `specrepo/spec.yaml`) must pass for the workflow to enter the
+`implementation_reviewed` state. `implementation_review_exists` checks that an
+implementation review file exists under `specrepo/implementation-reviews/*.md`.
+`test_plan_exists` checks that the approved proposal or implementation review
+contains a `## Test Plan` section.
 
 ## Implementation
 
