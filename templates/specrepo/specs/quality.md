@@ -26,7 +26,7 @@ deterministic.>
 - <Secret-handling, network, filesystem, subprocess, or data safety rule>
 - <Secret-handling, network, filesystem, subprocess, or data safety rule>
 
-## Documentation Rules
+## Documentation Rules {#documentation-rules}
 
 User-visible behavior changes require corresponding documentation updates.
 Architecture or workflow changes require corresponding updates under
