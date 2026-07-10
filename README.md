@@ -79,8 +79,8 @@ Reusable agents must discover local project facts from SpecRepo:
 | Source roots | `specrepo/spec.yaml` `source_roots` |
 | Test roots | `specrepo/spec.yaml` `test_roots` |
 | Default verification | `specrepo/spec.yaml` `commands.test` |
-| Workflow gates | `specrepo/workflow.md` |
-| Product, architecture, and quality expectations | `specrepo/specs/` |
+| Workflow gates | `specrepo/spec.yaml` `workflow` and `required_gates` |
+| Product, architecture, quality, and glossary expectations | `specrepo/specs/` |
 | Active decisions | `specrepo/requests/`, `specrepo/proposals/`, `specrepo/approved/`, `specrepo/implementation-reviews/` |
 
 ## Configuration Files

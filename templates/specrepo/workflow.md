@@ -22,13 +22,13 @@ state is reached; exit gates must pass before the state is left.
 
 | State | Directory | Owner | Entry Gates | Exit Gates |
 | --- | --- | --- | --- | --- |
-| `requested` | `requests/` | Request author, normally `@request-author` | — | `request_file_exists` |
-| `architecture_proposed` | `proposals/` | Spec reviewer | `request_file_exists`, `current_specs_read` | `approved_architecture_exists` |
-| `approved` | `approved/` | Architecture-approver | `approved_architecture_exists` | `implementation_review_exists` |
-| `implementation_reviewed` | `implementation-reviews/` | Implementation reviewer | `approved_architecture_exists`, `implementation_review_exists`, `test_plan_exists` | — |
+| `requested` | `specrepo/requests/` | Request author, normally `@request-author` | — | `request_file_exists` |
+| `architecture_proposed` | `specrepo/proposals/` | Spec reviewer | `request_file_exists`, `current_specs_read` | `approved_architecture_exists` |
+| `approved` | `specrepo/approved/` | Architecture-approver | `approved_architecture_exists` | `implementation_review_exists` |
+| `implementation_reviewed` | `specrepo/implementation-reviews/` | Implementation reviewer | `approved_architecture_exists`, `implementation_review_exists`, `test_plan_exists` | — |
 | `implementing` | source tree | Coding agent | `approved_architecture_exists`, `implementation_review_exists`, `test_plan_exists` | — |
 | `verified` | source tree | Coding agent | `tests_run_or_exception_recorded` | `specs_updated_if_behavior_changed` |
-| `closed` | `approved/` | Human or coding agent | `specs_updated_if_behavior_changed` | — |
+| `closed` | `specrepo/approved/` | Human or coding agent | `specs_updated_if_behavior_changed` | — |
 
 Gate definitions (check type, pattern, spec reference) are in
 `specrepo/spec.yaml` under `required_gates`.
