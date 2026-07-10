@@ -46,6 +46,7 @@ graph TD
         ImplReview[→ @implementation-reviewer]:::subagent
         ImplGate{Proceed or Stop?}:::decision
         Implement[Implement within scope]:::primary
+        UpdateSpecs[Update baseline specs if behavior changed]:::primary
         Verify[Run verification]:::primary
         TestReviewer[→ @test-reviewer]:::subagent
         TestResult{Result}:::decision
@@ -56,7 +57,8 @@ graph TD
         ImplReview --> ImplGate
         ImplGate -->|Proceed| Implement
         ImplGate -->|Stop for revised architecture| StopArch((Stop)):::terminal
-        Implement --> Verify
+        Implement --> UpdateSpecs
+        UpdateSpecs --> Verify
         Verify --> TestReviewer
         TestReviewer --> TestResult
         TestResult -->|pass| Autocommit
