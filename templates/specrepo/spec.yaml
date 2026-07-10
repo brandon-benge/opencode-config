@@ -1,4 +1,3 @@
-schema_version: 1
 name: <repo-name>-specrepo
 project:
   name: <Project Name>
@@ -121,9 +120,3 @@ required_gates:
     spec_ref: quality.md §Documentation Rules
 commands:
   test: <default verification command or "">
-  package_metadata: <package manifest path or "">
-  default_config: <runtime config path or "">
-agent_policy:
-  spec_reviewer_may_edit_code: false
-  coding_agent_must_review_approved_architecture: true
-  implementation_requires_human_approval: true

@@ -53,6 +53,11 @@ Out of scope:
 - Product spec: changed/unchanged
 - Architecture spec: changed/unchanged
 - Quality spec: changed/unchanged
+- Glossary: changed/unchanged
+
+This section predicts which specs will need editing during implementation. The
+@spec-coder agent updates them after implementation, before the
+`specs_updated_if_behavior_changed` gate passes.
 
 ## Approval Request
 

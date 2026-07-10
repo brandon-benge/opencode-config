@@ -88,8 +88,9 @@ Required actions:
 2. Read the relevant source files and tests.
 3. Create `specrepo/proposals/YYYY-MM-DD-short-name/architecture.md` from
    `specrepo/templates/architecture-proposal.md`.
-4. Update baseline specs only when the proposal changes approved project
-   architecture, product behavior, quality gates, or terminology.
+4. Identify which baseline specs will need updating when the proposal changes
+   approved project architecture, product behavior, quality gates, or
+   terminology. The actual spec edits happen during implementation.
 5. Stop. The architecture proposal is complete. Do not implement code.
 
 The proposal must state whether baseline specs were changed.
@@ -158,6 +159,11 @@ Implementation agents may edit code only inside the approved scope.
 
 If implementation reveals that architecture must change materially, stop and
 return to the proposal step. Do not silently expand the design.
+
+After implementing, update the affected baseline specs when the implementation
+changes user-visible behavior. The approved proposal's Baseline Spec Updates
+section identifies which specs are expected to change. The
+`specs_updated_if_behavior_changed` gate enforces this before close.
 
 ## Verification
 

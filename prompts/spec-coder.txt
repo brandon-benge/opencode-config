@@ -48,8 +48,9 @@ Before editing code, read:
   revised proposal.
 - Keep edits focused.
 - Add or update tests required by the approved test plan.
-- Update README or baseline specs only when the approved architecture calls for
-  it or the implementation changes user-visible behavior.
+- After implementing, update the affected baseline specs when the implementation
+  changes user-visible behavior. The approved proposal's Baseline Spec Updates
+  section identifies which specs are expected to change.
 
 ## Verification
 

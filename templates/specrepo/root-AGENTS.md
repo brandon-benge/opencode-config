@@ -53,8 +53,9 @@ When asked to review a feature request or create architecture:
    `specrepo/specs/`.
 2. Read the request from `specrepo/requests/`.
 3. Create or update an architecture proposal under `specrepo/proposals/`.
-4. Update baseline specs only if the proposed architecture changes the approved
-   understanding of the project.
+4. Identify which baseline specs will need updating if the proposed architecture
+   changes the approved understanding of the project. The actual spec edits
+   happen during implementation.
 5. Stop. The architecture proposal is complete. Do not implement code.
 
 ## Approval Path
@@ -81,12 +82,15 @@ When asked to implement an approved change:
 4. Use `@implementation-reviewer` to create or verify the implementation review
    under `specrepo/implementation-reviews/`.
 5. Implement only within the approved scope.
-6. Run the approved verification plan or record why it could not be run.
-7. If all required verification commands pass, run
+6. If implementation changed user-visible behavior, update the affected baseline
+   specs. The approved proposal's Baseline Spec Updates section indicates which
+   specs are expected to change.
+7. Run the approved verification plan or record why it could not be run.
+8. If all required verification commands pass, run
    `$HOME/.config/opencode/specrepo-autocommit` with a four-line summary as the
    final command. Do not run it when verification fails, is skipped, or cannot
    run. The hook blocks autocommit on `main`.
-8. Use `@test-reviewer` to review coverage and verification evidence before
+9. Use `@test-reviewer` to review coverage and verification evidence before
    closing the change.
 
 If the approved architecture is incomplete, inconsistent, or requires material
