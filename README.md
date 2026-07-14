@@ -162,4 +162,38 @@ tighten each profile further in `opencode.jsonc`.
 
 | Variable | Purpose |
 | --- | --- |
-| `AUTOCOMMIT_PARAMS` | Optional path to a YAML parameters file passed as `--config-file` to the `autocommit` CLI. If unset, only `-c <summary>` is used. See [example params.yaml](https://github.com/brandon-benge/langchain_autocommit/blob/main/params.yaml). |
+| `OPENCODE_API_KEY` | Optional API key used by `specrepo-autocommit` to run `opencode -c <summary>` directly. If unset, the hook falls back to the `autocommit` CLI. |
+| `AUTOCOMMIT_PARAMS` | Optional path to a YAML parameters file read directly by the `autocommit` CLI from the environment. If unset, no config file is passed. See [example params.yaml](https://github.com/brandon-benge/langchain_autocommit/blob/main/params.yaml). |
+
+To set these globally for interactive macOS `zsh` sessions, add them to
+`~/.zshrc`:
+
+```bash
+export OPENCODE_API_KEY="..."
+export AUTOCOMMIT_PARAMS="$HOME/.config/opencode/params.yaml"
+```
+
+Reload the shell after editing:
+
+```bash
+source ~/.zshrc
+```
+
+On Windows, set them in the environment used to launch opencode. For a
+persistent PowerShell user variable:
+
+```powershell
+[Environment]::SetEnvironmentVariable("OPENCODE_API_KEY", "...", "User")
+[Environment]::SetEnvironmentVariable("AUTOCOMMIT_PARAMS", "$env:USERPROFILE\.config\opencode\params.yaml", "User")
+```
+
+Open a new terminal after setting persistent Windows variables.
+
+These locations are only the global defaults. You can set the variables any
+other way that fits your environment, such as inline for one command, through a
+terminal profile, direnv, CI secrets, or a process manager.
+
+If `OPENCODE_API_KEY` is not set, `specrepo-autocommit` uses the
+`autocommit` CLI path. That CLI can fetch credentials from Keychain depending
+on its own configuration; read the `autocommit` README and point this repo at
+the desired config by setting `AUTOCOMMIT_PARAMS` to that YAML file path.

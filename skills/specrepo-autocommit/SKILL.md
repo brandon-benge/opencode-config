@@ -32,9 +32,6 @@ $HOME/.config/opencode/specrepo-autocommit "<four-line summary>"
 
 The summary must contain exactly four non-empty lines.
 
-Set `AUTOCOMMIT_PARAMS` only when the user or environment provides a config
-file path for the autocommit CLI.
-
 ## Prohibitions
 
 Do not run the hook when:

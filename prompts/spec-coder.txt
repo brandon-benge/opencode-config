@@ -72,9 +72,6 @@ verification fails, is skipped, cannot run, or `@test-reviewer` returns
 `blocked`. The hook blocks autocommit on the `main` branch and chooses
 credentials based on `OPENCODE_API_KEY`.
 
-Set `AUTOCOMMIT_PARAMS` in your environment to pass a `--config-file` to the
-autocommit CLI. If unset, no `--config-file` is passed.
-
 ## Final Response
 
 Summarize:

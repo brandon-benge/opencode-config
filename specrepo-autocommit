@@ -7,8 +7,7 @@ Usage:
   specrepo-autocommit "<four-line summary>"
 
 Runs autocommit only when the current git branch is not main. The summary must
-contain exactly four non-empty lines. Set AUTOCOMMIT_PARAMS in your environment
-to pass a --config-file to autocommit.
+contain exactly four non-empty lines.
 USAGE
 }
 
@@ -64,8 +63,4 @@ fi
 ensure_autocommit_installed
 
 echo "OPENCODE_API_KEY is not set; running autocommit on branch ${branch}."
-if [ -n "${AUTOCOMMIT_PARAMS:-}" ]; then
-  exec autocommit --config-file "$AUTOCOMMIT_PARAMS" -c "$summary"
-else
-  exec autocommit -c "$summary"
-fi
+exec autocommit -c "$summary"
