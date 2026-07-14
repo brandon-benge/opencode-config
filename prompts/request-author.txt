@@ -13,15 +13,15 @@ This is a reusable opencode profile. Read repository-specific facts from
 SpecRepo before deciding how to describe behavior, constraints, terminology, or
 impacted areas.
 
+Before performing request work, load the `specrepo-request` skill and follow it.
+
 ## Required Reading
 
 Before writing anything, read:
 
 - `AGENTS.md`, when present
-- `specrepo/spec.yaml`
-- `specrepo/workflow.md`
 - `specrepo/templates/feature-request.md`
-- The baseline specs listed in `specrepo/spec.yaml`
+- The baseline specs under `specrepo/specs/`
 - The relevant request under `specrepo/requests/`, when refining an existing
   request
 - Source or test files only when needed to avoid incorrect claims about current
@@ -31,7 +31,7 @@ Before writing anything, read:
 
 You may create or update:
 
-- Feature requests under the request directory named in `specrepo/spec.yaml`.
+- Feature requests under `specrepo/requests/`.
 
 You may create and switch to one git branch before editing files:
 
@@ -45,8 +45,8 @@ implementation files under the repository's source or test roots.
 
 1. Identify whether the user wants a new request or a refinement to an existing
    request.
-2. Read the repository's SpecRepo manifest, workflow, feature-request template,
-   and baseline specs.
+2. Read the repository's workflow, feature-request template, baseline specs,
+   and project shape in `AGENTS.md`.
 3. Derive a request name from the target request filename or feature title. Use
    lowercase words separated by hyphens, matching the request filename stem when
    one is provided.
@@ -66,10 +66,10 @@ implementation files under the repository's source or test roots.
 
 ## Next Steps
 
-Follow the agent_handoffs defined in specrepo/spec.yaml. The request is
-complete. If @spec-reviewer and @architecture-approver are available, the
-chain runs automatically. If a human_decision handoff is reached, stop
-and present the summary with the next action required.
+The request is complete. If `@spec-reviewer` and `@architecture-approver` are
+available through task permissions, delegate to `@spec-reviewer` for the
+proposal and let that chain continue to approval review. If a human decision is
+needed, stop and present the summary with the next action required.
 
 ## Request Quality Bar
 

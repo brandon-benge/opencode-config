@@ -9,11 +9,12 @@ Keep responsibilities separate:
 
 | Directory | Responsibility |
 | --- | --- |
-| `opencode-config/` | Reusable opencode agent profiles, permissions, prompts, and workflow guidance. |
-| `specrepo/` | Repo-specific project facts, workflow gates, baseline specs, templates, requests, proposals, approvals, implementation reviews, and verification commands. |
+| `opencode-config/` | Reusable opencode agent config, permissions, prompts, skills, and workflow guidance. |
+| `specrepo/` | Repo-specific baseline specs, templates, requests, proposals, approvals, implementation reviews, and verification evidence. |
 
-Agents should treat `specrepo/spec.yaml` as the manifest for local facts such
-as `source_roots`, `test_roots`, workflow directories, and `commands.test`.
+Agents should treat repository-root `AGENTS.md` and `specrepo/specs/` as the
+source for local project facts such as source roots, test roots, runtime config,
+and default verification commands. Reusable procedures live in opencode skills.
 
 ## Purpose And Prerequisites
 
@@ -24,13 +25,11 @@ merge without losing the decision trail.
 The target repository should have:
 
 - opencode configured with the agents from this bundle.
-- `specrepo/spec.yaml`.
-- `specrepo/workflow.md`.
+- A repository-root `AGENTS.md` with current project shape.
 - Baseline specs under `specrepo/specs/`.
 - Templates under `specrepo/templates/`.
 - A clean enough working tree that feature changes can be reviewed.
-- A feature request file under the request directory named in
-  `specrepo/spec.yaml`.
+- A feature request file under `specrepo/requests/`.
 
 If the request does not exist yet, ask `@request-author` to create one before
 architecture work begins. Keep the request small enough that behavior,
@@ -94,9 +93,9 @@ full branching flow with decision gates).
 
 ## Prompt Templates
 
-Replace bracketed placeholders with paths and names from the target
-repository's SpecRepo manifest. Subagents are called automatically — you only
-need to call the primary agents.
+Replace bracketed placeholders with paths and names from the target repository's
+SpecRepo directory and `AGENTS.md`. Subagents are called automatically — you
+only need to call the primary agents.
 
 ### 0. Bootstrap SpecRepo With `@specrepo-bootstrapper`
 
@@ -115,12 +114,11 @@ records, or implementation reviews for unrelated work.
 
 Expected output:
 
-- `specrepo/spec.yaml`
-- `specrepo/workflow.md`
 - Baseline specs under `specrepo/specs/`
 - Inboxes under `specrepo/requests/`, `specrepo/proposals/`,
   `specrepo/approved/`, and `specrepo/implementation-reviews/`
 - Artifact templates under `specrepo/templates/`
+- Repository-root `AGENTS.md` updated with project shape and SpecRepo guidance
 
 Human gate:
 

@@ -7,14 +7,14 @@ for further human input.
 This is a reusable opencode profile. Read repository-specific facts from
 SpecRepo before judging scope, commands, file paths, or test expectations.
 
+Before approval work, load the `specrepo-approval` skill and follow it.
+
 ## Required Reading
 
 Read:
 
 - `AGENTS.md`, when present
-- `specrepo/spec.yaml`
-- `specrepo/workflow.md`
-- The baseline specs listed in `specrepo/spec.yaml`
+- The baseline specs under `specrepo/specs/`
 - The request referenced by the proposal
 - The proposal being reviewed
 - Any baseline spec diffs related to the proposal

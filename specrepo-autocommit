@@ -6,8 +6,9 @@ usage() {
 Usage:
   specrepo-autocommit "<four-line summary>"
 
-Runs the configured autocommit command only when the current git branch is not
-main. The summary must contain exactly four non-empty lines.
+Runs autocommit only when the current git branch is not main. The summary must
+contain exactly four non-empty lines. Set AUTOCOMMIT_PARAMS in your environment
+to pass a --config-file to autocommit.
 USAGE
 }
 
@@ -40,15 +41,31 @@ if [ "$branch" = "main" ]; then
   exit 0
 fi
 
+ensure_autocommit_installed() {
+  if command -v autocommit &>/dev/null; then
+    return 0
+  fi
+  echo "autocommit CLI not found. Installing via pip3 --user..."
+  pip3 install --user "git+https://github.com/brandon-benge/langchain_autocommit.git"
+  user_base="$(python3 -m site --user-base)"
+  export PATH="$user_base/bin:$PATH"
+  if ! command -v autocommit &>/dev/null; then
+    echo "Error: autocommit installed but not found on PATH at $user_base/bin." >&2
+    exit 1
+  fi
+  echo "autocommit installed successfully."
+}
+
 if [ -n "${OPENCODE_API_KEY:-}" ]; then
   echo "OPENCODE_API_KEY is set; running opencode autocommit on branch ${branch}."
   exec opencode -c "$summary"
 fi
 
-echo "OPENCODE_API_KEY is not set; running autocommit with keychain credentials on branch ${branch}."
-exec autocommit \
-  --keychain \
-  --keychain-service "langchain_autocommit" \
-  --keychain-key "opencode_api_key" \
-  --yes
-  -c "$summary"
+ensure_autocommit_installed
+
+echo "OPENCODE_API_KEY is not set; running autocommit on branch ${branch}."
+if [ -n "${AUTOCOMMIT_PARAMS:-}" ]; then
+  exec autocommit --config-file "$AUTOCOMMIT_PARAMS" -c "$summary"
+else
+  exec autocommit -c "$summary"
+fi

@@ -28,8 +28,9 @@ Before writing anything, read:
   records for unrelated work.
 - Do not edit implementation source or tests while bootstrapping SpecRepo.
 - Keep `specrepo/agents/` out of the generated structure. Reusable agent
-  profiles are defined in `opencode-config/opencode.yaml` with system prompts
-  in `opencode-config/prompts/`.
+  profiles are defined in `opencode-config/opencode.jsonc` with system prompts
+  in `opencode-config/prompts/` and reusable skills in
+  `opencode-config/skills/`.
 - Keep reusable templates in `opencode-config/templates/specrepo/`; generated
   files under `specrepo/` must be tailored to the target repository.
 - Always create or update repository-root `AGENTS.md` when bootstrapping
@@ -47,8 +48,6 @@ Create this structure:
 ```text
 specrepo/
   README.md
-  spec.yaml
-  workflow.md
   specs/
     product.md
     architecture.md
@@ -81,33 +80,27 @@ AGENTS.md
 1. Inspect the repository enough to identify product name, primary language,
    source roots, test roots, package metadata, default config files, and likely
    verification commands.
-2. Create `specrepo/spec.yaml` from the template and fill project-specific
-   fields. The template already includes the `agent_handoffs` section; preserve
-   it as-is — only project-specific fields under `project:`, `source_roots:`,
-   `test_roots:`, and `commands:` should change.
-3. Create `specrepo/workflow.md`, preserving the reusable gates while adapting
-   command names or local policy only where needed.
-4. Create baseline specs under `specrepo/specs/` with repo-specific product,
+2. Create baseline specs under `specrepo/specs/` with repo-specific product,
    architecture, quality, and terminology content.
-5. Create inbox/archive README files and artifact templates under `specrepo/`.
-6. Create or update `AGENTS.md` from
+3. Create inbox/archive README files and artifact templates under `specrepo/`.
+4. Create or update `AGENTS.md` from
    `opencode-config/templates/specrepo/root-AGENTS.md`. Fill the current project
-   shape from the same facts used for `specrepo/spec.yaml`, including package
-   root, tests, runtime config source of truth, and default verification
-   command. When updating an existing `AGENTS.md`, keep unrelated local guidance
-   and ensure the SpecRepo default rule, agent handoffs, spec review path,
+   shape from the repository facts, including package root, source roots, tests,
+   runtime config source of truth, default verification command, and available
+   SpecRepo skills. When updating an existing `AGENTS.md`, keep unrelated local
+   guidance and ensure the SpecRepo default rule, agent paths, spec review path,
    implementation path, and current project shape are present and current.
-7. End with a summary of inferred facts, created files, and any facts that need
+5. End with a summary of inferred facts, created files, and any facts that need
    human confirmation.
 
 ## Quality Bar
 
 The generated SpecRepo must be usable immediately:
 
-- `specrepo/spec.yaml` points to all generated baseline specs and workflow
-  directories.
+- `AGENTS.md` records project shape, source roots, test roots, runtime config,
+  default verification, and SpecRepo skill usage.
 - Baseline specs describe the actual target repository, not placeholder text.
-- Templates match the workflow gates.
+- Templates match the opencode skills and agent prompts.
 - Requests remain separate from proposals, approvals, implementation reviews,
   and implementation.
 - Approval is created automatically by @architecture-approver when the proposal

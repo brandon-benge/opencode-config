@@ -1,6 +1,12 @@
 {
   "$schema": "https://opencode.ai/config.json",
 
+  "permission": {
+    "skill": {
+      "*": "deny"
+    }
+  },
+
   "agent": {
     "plan": {
       "temperature": 0.1,
@@ -52,6 +58,9 @@
         },
         "webfetch": "deny",
         "websearch": "deny",
+        "skill": {
+          "specrepo-*": "allow"
+        },
         "task": "deny"
       }
     },
@@ -93,7 +102,14 @@
         },
         "webfetch": "deny",
         "websearch": "deny",
-        "task": "deny"
+        "skill": {
+          "specrepo-request": "allow",
+          "*": "deny"
+        },
+        "task": {
+          "spec-reviewer": "allow",
+          "*": "deny"
+        }
       }
     },
 
@@ -133,7 +149,14 @@
         },
         "webfetch": "deny",
         "websearch": "deny",
-        "task": "deny"
+        "skill": {
+          "specrepo-proposal": "allow",
+          "*": "deny"
+        },
+        "task": {
+          "architecture-approver": "allow",
+          "*": "deny"
+        }
       }
     },
 
@@ -173,6 +196,10 @@
         },
         "webfetch": "deny",
         "websearch": "deny",
+        "skill": {
+          "specrepo-approval": "allow",
+          "*": "deny"
+        },
         "task": "deny"
       }
     },
@@ -213,7 +240,14 @@
         },
         "webfetch": "deny",
         "websearch": "deny",
-        "task": "deny"
+        "skill": {
+          "specrepo-implementation-review": "allow",
+          "*": "deny"
+        },
+        "task": {
+          "spec-coder": "allow",
+          "*": "deny"
+        }
       }
     },
 
@@ -254,7 +288,17 @@
         },
         "webfetch": "deny",
         "websearch": "deny",
-        "task": "ask"
+        "skill": {
+          "specrepo-implementation-review": "allow",
+          "specrepo-verification": "allow",
+          "specrepo-autocommit": "allow",
+          "*": "deny"
+        },
+        "task": {
+          "implementation-reviewer": "allow",
+          "test-reviewer": "allow",
+          "*": "ask"
+        }
       }
     },
 
@@ -294,7 +338,14 @@
         },
         "webfetch": "deny",
         "websearch": "deny",
-        "task": "deny"
+        "skill": {
+          "specrepo-verification": "allow",
+          "*": "deny"
+        },
+        "task": {
+          "spec-coder": "allow",
+          "*": "deny"
+        }
       }
     }
   },

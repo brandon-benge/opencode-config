@@ -8,14 +8,15 @@ and decide whether tests and verification evidence are sufficient.
 This is a reusable opencode profile. Read repository-specific quality rules,
 test roots, and verification commands from SpecRepo before judging coverage.
 
+Before verification review, load the `specrepo-verification` skill and follow
+the review-agent procedure.
+
 ## Required Reading
 
 Read:
 
 - `AGENTS.md`, when present
-- `specrepo/spec.yaml`
-- `specrepo/workflow.md`
-- The quality spec listed in `specrepo/spec.yaml`
+- `specrepo/specs/quality.md`
 - The approval record
 - The approved proposal
 - The implementation review

@@ -9,19 +9,16 @@ Do not start implementation until the approval record exists under
 `specrepo/approved/`.
 
 If a matching implementation review does not yet exist under
-`specrepo/implementation-reviews/`, follow the agent_handoffs defined in
-specrepo/spec.yaml (the coder_to_impl_reviewer handoff) to delegate to
-`@implementation-reviewer`. If that handoff returns a blocking condition,
-stop and report the blocker. Do not proceed to implementation.
+`specrepo/implementation-reviews/`, delegate to `@implementation-reviewer`.
+If that review returns a blocking condition, stop and report the blocker. Do
+not proceed to implementation.
 
 ## Required Reading
 
 Before editing code, read:
 
 - `AGENTS.md`, when present
-- `specrepo/spec.yaml`
-- `specrepo/workflow.md`
-- Current baseline specs listed in `specrepo/spec.yaml`
+- Current baseline specs under `specrepo/specs/`
 - The approval record
 - The approved proposal referenced by the approval record
 - The matching implementation review
@@ -43,26 +40,28 @@ Before editing code, read:
 
 ## Verification
 
-Run the approved verification plan. If no narrower command is specified, read
-`commands.test` from `specrepo/spec.yaml` and run that command. If the
-repository has no default verification command, record that no default command
-is configured.
+Before verification, load the `specrepo-verification` skill and follow it. Run
+the approved verification plan. If no narrower command is specified, read the
+default verification command from `AGENTS.md` or `specrepo/specs/quality.md`
+and run that command. If the repository has no default verification command,
+record that no default command is configured.
 
 If verification cannot run, record the exact reason in your final response.
 
 ## Test Review
 
-After all required verification commands pass, follow the agent_handoffs in
-specrepo/spec.yaml (the coder_to_test_reviewer handoff) to delegate to
-`@test-reviewer`. Act on the result per the handoff conditions:
-- **auto** condition `"pass" or "needs more tests"` — proceed to autocommit
-  or fix tests and re-run.
-- **human_decision** condition `"blocked"` — stop, report the blocking
-  issues, and do not call the autocommit hook.
+After all required verification commands pass, delegate to `@test-reviewer`.
+Act on the result:
+- `pass` — continue to the autocommit step.
+- `needs more tests` — add or revise tests within approved scope, then re-run
+  verification and test review.
+- `blocked` — stop, report the blocking issues, and do not call the autocommit
+  hook.
 
 ## Autocommit Hook
 
-After `@test-reviewer` returns `pass`, call the local autocommit hook:
+After `@test-reviewer` returns `pass`, load the `specrepo-autocommit` skill and
+follow it. Then call the local autocommit hook:
 
 ```bash
 $HOME/.config/opencode/specrepo-autocommit "<four-line summary of what changed>"
@@ -72,6 +71,9 @@ The summary must contain exactly four non-empty lines. Do not call the hook when
 verification fails, is skipped, cannot run, or `@test-reviewer` returns
 `blocked`. The hook blocks autocommit on the `main` branch and chooses
 credentials based on `OPENCODE_API_KEY`.
+
+Set `AUTOCOMMIT_PARAMS` in your environment to pass a `--config-file` to the
+autocommit CLI. If unset, no `--config-file` is passed.
 
 ## Final Response
 

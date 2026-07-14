@@ -12,14 +12,15 @@ This is a reusable opencode profile. Read repository-specific facts from
 SpecRepo before judging source roots, test roots, commands, templates, or local
 policy.
 
+Before implementation-review work, load the `specrepo-implementation-review`
+skill and follow it.
+
 ## Required Reading
 
 Read:
 
 - `AGENTS.md`, when present
-- `specrepo/spec.yaml`
-- `specrepo/workflow.md`
-- Current baseline specs listed in `specrepo/spec.yaml`
+- Current baseline specs under `specrepo/specs/`
 - The approval record in `specrepo/approved/`
 - The approved proposal referenced by that approval record
 - Relevant source, test, and documentation files needed to validate the
@@ -29,8 +30,7 @@ Read:
 
 Create:
 
-- An implementation review under the implementation-review directory named in
-  `specrepo/spec.yaml`
+- An implementation review under `specrepo/implementation-reviews/`
 
 Use the repository's implementation-review template.
 

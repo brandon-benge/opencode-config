@@ -9,10 +9,9 @@ specific product name, package path, source root, test root, verification
 command, runtime config path, approval record, request, proposal, or
 implementation review.
 
-Repository-specific facts belong in the target repository's `specrepo/`
-directory. Agents should read `specrepo/spec.yaml`, `specrepo/workflow.md`, the
-baseline specs, and the active request/proposal/approval/review records before
-acting.
+Repository-specific facts belong in the target repository's `AGENTS.md` and
+`specrepo/` directory. Agents should read `AGENTS.md`, the baseline specs, and
+the active request/proposal/approval/review records before acting.
 
 If a repository does not have `specrepo/` yet, use `@specrepo-bootstrapper`.
 It creates the complete structure from the reusable templates in
@@ -51,8 +50,8 @@ Expected shape:
 ~/.config/opencode -> /Users/<you>/Desktop/GitProjects/opencode-config
 ```
 
-After this, opencode can find the root config files in this repository:
-`opencode.yaml` and `opencode.jsonc`.
+After this, opencode can find `opencode.jsonc`, prompts, and skills in this
+repository.
 
 If you already have an opencode configuration, review it before replacing the
 directory. Move any local settings you want to keep into this repository, or
@@ -60,14 +59,19 @@ keep the backup created above at `~/.config/opencode.backup`.
 
 ## Agent Configuration
 
-Agents are defined in [`opencode.yaml`](./opencode.yaml), which is the single
+Agents are defined in [`opencode.jsonc`](./opencode.jsonc), which is the single
 source of truth for each agent's description, mode, temperature, permissions,
-and tool access. Their system prompts live in [`prompts/`](./prompts/) as
-standalone `.txt` files referenced via the `prompt: "{file:...}"` field.
+skill access, and tool access. Their system prompts live in
+[`prompts/`](./prompts/) as standalone `.txt` files referenced via the
+`prompt: "{file:...}"` field.
 
-For example, `opencode.yaml` defines `@architecture-approver` and loads its
+For example, `opencode.jsonc` defines `@architecture-approver` and loads its
 prompt from `prompts/architecture-approver.txt`. No additional setup or file
 copying is required after the symlink installation.
+
+Reusable procedures live in [`skills/`](./skills/). OpenCode loads them on
+demand through the native skill tool, and `opencode.jsonc` grants each agent
+only the skills it needs.
 
 ## Repository Fact Source
 
@@ -75,11 +79,11 @@ Reusable agents must discover local project facts from SpecRepo:
 
 | Fact | Source |
 | --- | --- |
-| Project metadata | `specrepo/spec.yaml` |
-| Source roots | `specrepo/spec.yaml` `source_roots` |
-| Test roots | `specrepo/spec.yaml` `test_roots` |
-| Default verification | `specrepo/spec.yaml` `commands.test` |
-| Workflow gates | `specrepo/spec.yaml` `workflow` and `required_gates` |
+| Project metadata | Repository-root `AGENTS.md` |
+| Source roots | Repository-root `AGENTS.md` |
+| Test roots | Repository-root `AGENTS.md` |
+| Default verification | Repository-root `AGENTS.md` and `specrepo/specs/quality.md` |
+| Workflow gates | `AGENTS.md`, prompts, and SpecRepo skills |
 | Product, architecture, quality, and glossary expectations | `specrepo/specs/` |
 | Active decisions | `specrepo/requests/`, `specrepo/proposals/`, `specrepo/approved/`, `specrepo/implementation-reviews/` |
 
@@ -89,20 +93,12 @@ Both root configuration files are for opencode:
 
 | File | Role |
 | --- | --- |
-| `opencode.jsonc` | Root JSONC opencode configuration for the `plan` and `build` agents plus watcher behavior. |
-| `opencode.yaml` | YAML opencode agent configuration for SpecRepo workflow agents. Defines each agent's description, mode, temperature, permissions, and tool access, and loads its system prompt from `prompts/` via the `prompt` field. |
+| `opencode.jsonc` | Root JSONC opencode configuration for built-in agents, SpecRepo workflow agents, permissions, skill access, and watcher behavior. |
 
-`opencode.yaml` defines the workflow agents referenced below:
+`opencode.jsonc` defines the workflow agents referenced below:
 `specrepo-bootstrapper`, `request-author`, `spec-reviewer`,
 `architecture-approver`, `implementation-reviewer`, `spec-coder`, and
 `test-reviewer`.
-
-`opencode.jsonc` configures two opencode agents:
-
-| Agent | Purpose |
-| --- | --- |
-| `plan` | Low-temperature planning agent with a 3-step limit and write/edit tools disabled. |
-| `build` | Low-temperature build agent with a 10-step limit. |
 
 It also configures the watcher to ignore generic generated or noisy paths such
 as VCS internals and build outputs.
@@ -144,9 +140,9 @@ prompt templates.
 
 | File | Purpose |
 | --- | --- |
-| `opencode.yaml` | YAML agent configuration defining each agent's metadata and loading its system prompt from `prompts/`. |
-| `opencode.jsonc` | Root opencode config for the `plan` and `build` agents plus watcher ignores. |
-| `prompts/` | System prompt `.txt` files loaded by each agent via the `prompt: "{file:...}"` field in `opencode.yaml`. |
+| `opencode.jsonc` | Root opencode config for agents, permissions, skill access, and watcher ignores. |
+| `prompts/` | System prompt `.txt` files loaded by each agent via the `prompt: "{file:...}"` field in `opencode.jsonc`. |
+| `skills/` | Reusable opencode skills loaded on demand by specific agents. |
 | `specrepo-autocommit` | Finalization hook run by `@spec-coder` after required verification passes; blocks on `main` and chooses credentials from `OPENCODE_API_KEY` or Keychain. |
 | `templates/specrepo/` | Reusable template pack for generating a repo-specific `specrepo/` directory. |
 
@@ -160,4 +156,10 @@ verification commands repository-specific: read them from SpecRepo artifacts or
 add local allowlists after copying the config into a target repository.
 
 If your opencode version supports reliable path-scoped edit permissions, you can
-tighten each profile further in `opencode.yaml`.
+tighten each profile further in `opencode.jsonc`.
+
+## Environment Variables
+
+| Variable | Purpose |
+| --- | --- |
+| `AUTOCOMMIT_PARAMS` | Optional path to a YAML parameters file passed as `--config-file` to the `autocommit` CLI. If unset, only `-c <summary>` is used. See [example params.yaml](https://github.com/brandon-benge/langchain_autocommit/blob/main/params.yaml). |
