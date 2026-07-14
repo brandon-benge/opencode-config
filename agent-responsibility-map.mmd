@@ -2,7 +2,10 @@ graph LR
     classDef primary fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
     classDef subagent fill:#fff3e0,stroke:#e65100,stroke-width:1px
     classDef human fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    classDef skill fill:#f3e5f5,stroke:#7b1fa2,stroke-width:1px,stroke-dasharray:5 5
+    classDef artifact fill:#eeeeee,stroke:#616161,stroke-width:1px
 
+    H[Human]:::human
     BS["@specrepo-bootstrapper"]:::primary
     RA["@request-author"]:::primary
     SR["@spec-reviewer"]:::subagent
@@ -10,36 +13,54 @@ graph LR
     SC["@spec-coder"]:::primary
     IR["@implementation-reviewer"]:::subagent
     TR["@test-reviewer"]:::subagent
-    H[Human]:::human
 
-    H -->|calls| RA
-    H -->|calls| SC
+    ReqSkill["specrepo-request"]:::skill
+    PropSkill["specrepo-proposal"]:::skill
+    ApprovalSkill["specrepo-approval"]:::skill
+    ImplReviewSkill["specrepo-implementation-review"]:::skill
+    VerifySkill["specrepo-verification"]:::skill
+    CommitSkill["specrepo-autocommit"]:::skill
+
     H -->|calls once| BS
+    H -->|calls| RA
+    H -->|after approval| SC
 
-    RA -->|"[auto]"| SR
-    SR -->|"[auto]"| AA
-    AA -->|"[human_decision]"| H
+    RA -->|loads| ReqSkill
+    RA -->|delegates| SR
+    SR -->|loads| PropSkill
+    SR -->|delegates| AA
+    AA -->|loads| ApprovalSkill
+    AA -->|returns recommendation| H
 
-    SC -->|"[auto]"| IR
-    IR -->|"[human_decision]"| H
-    SC -->|"[auto]"| TR
-    TR -->|"[human_decision]"| H
+    SC -->|delegates if missing review| IR
+    IR -->|loads| ImplReviewSkill
+    IR -->|returns proceed / stop| SC
+    SC -->|loads| VerifySkill
+    SC -->|delegates after verification| TR
+    TR -->|loads| VerifySkill
+    TR -->|returns pass / needs more tests / blocked| SC
+    SC -->|loads after pass| CommitSkill
 
-    RA -.->|creates| Request[Request file]
-    SR -.->|creates| Proposal[Architecture proposal]
-    AA -.->|auto-creates| Approval[Approval record]
-    IR -.->|creates| ImplReview[Implementation review]
-    SC -.->|implements| Code[Code + tests]
-    TR -.->|reviews| Review[Test review]
+    BS -.->|creates / updates| Agents[AGENTS.md]:::artifact
+    BS -.->|creates| SpecRepo[specrepo docs/templates/specs]:::artifact
+    RA -.->|creates| Request[Request file]:::artifact
+    SR -.->|creates| Proposal[Architecture proposal]:::artifact
+    AA -.->|creates on approve| Approval[Approval record]:::artifact
+    IR -.->|creates| ImplReview[Implementation review]:::artifact
+    SC -.->|changes| Code[Code + tests + docs + specs]:::artifact
+    TR -.->|reviews| Evidence[Test and verification evidence]:::artifact
 
-    subgraph AutoChain1[Automatic Chain 1]
-        RA
-        SR
-        AA
+    subgraph Config[opencode.jsonc]
+        SkillPerms[Per-agent skill permissions]:::skill
+        TaskPerms[Per-agent task permissions]:::skill
     end
 
-    subgraph AutoChain2[Automatic Chain 2]
-        SC
-        IR
-        TR
-    end
+    SkillPerms -.-> RA
+    SkillPerms -.-> SR
+    SkillPerms -.-> AA
+    SkillPerms -.-> IR
+    SkillPerms -.-> SC
+    SkillPerms -.-> TR
+    TaskPerms -.-> RA
+    TaskPerms -.-> SR
+    TaskPerms -.-> SC

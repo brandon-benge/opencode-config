@@ -2,86 +2,96 @@ graph TD
     classDef human fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
     classDef primary fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
     classDef subagent fill:#fff3e0,stroke:#e65100,stroke-width:1px
-    classDef auto fill:#f3e5f5,stroke:#7b1fa2,stroke-width:1px,stroke-dasharray:5 5
+    classDef skill fill:#f3e5f5,stroke:#7b1fa2,stroke-width:1px,stroke-dasharray:5 5
     classDef decision fill:#fff8e1,stroke:#f9a825,stroke-width:2px
     classDef terminal fill:#fce4ec,stroke:#c62828,stroke-width:2px
 
-    Start((Start)) --> HasSpecRepo{Has specrepo/?}
-    HasSpecRepo -->|No| Bootstrap[Ask @specrepo-bootstrapper]
-    HasSpecRepo -->|Yes| RequestPhase
+    Start((Start)) --> HasSpecRepo{Has specrepo/ and AGENTS.md?}
+    HasSpecRepo -->|No| Bootstrap[Ask @specrepo-bootstrapper]:::primary
+    HasSpecRepo -->|Yes| RequestAuthor
 
-    Bootstrap --> RequestPhase
+    Bootstrap --> BootstrapOut[Generate specrepo docs/templates/specs and root AGENTS.md]:::primary
+    BootstrapOut --> RequestAuthor
 
-    subgraph RequestPhase[Request → Proposal → Approval]
+    subgraph RequestPhase[Request -> Proposal -> Approval]
         RequestAuthor[Call @request-author]:::primary
-        SpecReviewer[→ @spec-reviewer creates proposal]:::subagent
-        ArchApprover[→ @architecture-approver reviews]:::subagent
-        AutoApproval[Auto-creates approval record]:::auto
-        ReviseReject[Returns revise / reject]:::decision
+        RequestSkill[Load specrepo-request]:::skill
+        SpecReviewer[Delegate to @spec-reviewer]:::subagent
+        ProposalSkill[Load specrepo-proposal]:::skill
+        ArchApprover[Delegate to @architecture-approver]:::subagent
+        ApprovalSkill[Load specrepo-approval]:::skill
+        ApprovalResult{Approval result}:::decision
 
-        RequestAuthor -->|[auto]| SpecReviewer
-        SpecReviewer -->|[auto]| ArchApprover
-        ArchApprover -->|approve| AutoApproval
-        ArchApprover -->|revise / reject| ReviseReject
+        RequestAuthor --> RequestSkill
+        RequestSkill --> SpecReviewer
+        SpecReviewer --> ProposalSkill
+        ProposalSkill --> ArchApprover
+        ArchApprover --> ApprovalSkill
+        ApprovalSkill --> ApprovalResult
     end
 
-    AutoApproval -->|[human_decision]| HumanReview
+    ApprovalResult -->|approve: approval record created| HumanReview
+    ApprovalResult -->|revise / reject| StopRev((Stop)):::terminal
 
     subgraph HumanGate[Human Review]
-        HumanReview{Review proposal}:::human
+        HumanReview{Review proposal and approval}:::human
         Satisfied{Satisfied?}:::decision
-        NotSatisfied{Not satisfied?}:::decision
-
         HumanReview --> Satisfied
-        HumanReview --> NotSatisfied
     end
 
-    Satisfied -->|Yes - call @spec-coder| ImplPhase
-    NotSatisfied -->|No - stop here| StopImpl((Stop)):::terminal
+    Satisfied -->|Yes: call @spec-coder| SpecCoder
+    Satisfied -->|No: stop| StopImpl((Stop)):::terminal
 
-    ReviseReject --> StopRev((Stop)):::terminal
-
-    subgraph ImplPhase[Implementation → Test Review]
+    subgraph ImplPhase[Implementation -> Verification -> Test Review]
         SpecCoder[Call @spec-coder]:::primary
-        ImplReview[→ @implementation-reviewer]:::subagent
-        ImplGate{Proceed or Stop?}:::decision
-        Implement[Implement within scope]:::primary
+        NeedImplReview{Implementation review exists?}:::decision
+        ImplReview[Delegate to @implementation-reviewer]:::subagent
+        ImplReviewSkill[Load specrepo-implementation-review]:::skill
+        ImplGate{Proceed?}:::decision
+        Implement[Implement approved scope]:::primary
         UpdateSpecs[Update baseline specs if behavior changed]:::primary
-        Verify[Run verification]:::primary
-        TestReviewer[→ @test-reviewer]:::subagent
-        TestResult{Result}:::decision
-        FixTests[Fix and re-run]:::primary
-        Autocommit[Autocommit: git commit]:::auto
+        VerifySkill[Load specrepo-verification]:::skill
+        Verify[Run approved verification]:::primary
+        TestReviewer[Delegate to @test-reviewer]:::subagent
+        TestReviewSkill[Load specrepo-verification]:::skill
+        TestResult{Test review result}:::decision
+        FixTests[Fix tests or implementation within approved scope]:::primary
+        AutocommitSkill[Load specrepo-autocommit]:::skill
+        Autocommit[Run specrepo-autocommit hook]:::primary
 
-        SpecCoder -->|[auto]| ImplReview
-        ImplReview --> ImplGate
-        ImplGate -->|Proceed [auto]| Implement
-        ImplGate -->|Stop for revised architecture [human_decision]| StopArch((Stop)):::terminal
+        SpecCoder --> NeedImplReview
+        NeedImplReview -->|No| ImplReview
+        NeedImplReview -->|Yes| Implement
+        ImplReview --> ImplReviewSkill
+        ImplReviewSkill --> ImplGate
+        ImplGate -->|Proceed| Implement
+        ImplGate -->|Stop for revised architecture| StopArch((Stop)):::terminal
         Implement --> UpdateSpecs
-        UpdateSpecs --> Verify
-        Verify -->|[auto]| TestReviewer
-        TestReviewer --> TestResult
-        TestResult -->|pass [auto]| Autocommit
-        TestResult -->|needs more tests [auto]| FixTests
-        FixTests -->|retry| Verify
-        TestResult -->|blocked [human_decision]| StopBlock((Stop)):::terminal
+        UpdateSpecs --> VerifySkill
+        VerifySkill --> Verify
+        Verify -->|passed| TestReviewer
+        Verify -->|failed / skipped / cannot run| StopVerify((Stop)):::terminal
+        TestReviewer --> TestReviewSkill
+        TestReviewSkill --> TestResult
+        TestResult -->|pass| AutocommitSkill
+        TestResult -->|needs more tests| FixTests
+        FixTests --> VerifySkill
+        TestResult -->|blocked| StopBlock((Stop)):::terminal
+        AutocommitSkill --> Autocommit
     end
 
     Autocommit --> FinalReview
 
-    NoteAuto["Autocommit runs only after tests pass. It updates git but does no verification itself."]:::auto
-    Autocommit -.- NoteAuto
-
     subgraph MergePhase[Final Review]
-        FinalReview[Review diff and summary]:::human
+        FinalReview[Review summary and git diff]:::human
         Merge{Ready to merge?}:::decision
         FinalMerge((Merge)):::terminal
 
         FinalReview --> Merge
         Merge -->|Yes| FinalMerge
-        Merge -->|No| Reject((Don't merge)):::terminal
+        Merge -->|No| Reject((Do not merge)):::terminal
     end
 
-    StopImpl -.->|retry with refined request| RequestPhase
-    StopRev -.->|retry with clearer request| RequestPhase
-    StopArch -.->|retry with revised architecture| RequestPhase
+    StopImpl -.->|refine request| RequestAuthor
+    StopRev -.->|clarify request| RequestAuthor
+    StopArch -.->|revise architecture| SpecReviewer
