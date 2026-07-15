@@ -38,6 +38,13 @@ Before editing code, read:
   changes user-visible behavior. The approved proposal's Baseline Spec Updates
   section identifies which specs are expected to change.
 
+## README Update
+
+After implementing, update the repository's root `README.md` to reflect the
+actual implementation. Complete this update before verification, test review,
+and the autocommit hook so the documentation is verified and committed with the
+implementation.
+
 ## Verification
 
 Before verification, load the `specrepo-verification` skill and follow it. Run
