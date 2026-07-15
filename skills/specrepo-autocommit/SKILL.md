@@ -1,7 +1,6 @@
 ---
 name: specrepo-autocommit
-description: Finalize an approved SpecRepo implementation by running the local autocommit hook after verification and test review pass.
-compatibility: opencode
+description: Finalize an approved SpecRepo implementation by calling the Python-backed specrepo-autocommit custom tool after verification and a passing test review. Use only for the final commit step of an approved implementation.
 metadata:
   owner-agent: spec-coder
 ---
@@ -22,19 +21,28 @@ All preconditions must be true:
 - `@test-reviewer` returned recommendation `pass`.
 - The working branch is not `main`.
 
-## Command
+## Tool call
 
-Run:
+Call the `specrepo-autocommit` custom tool with:
 
-```bash
-$HOME/.config/opencode/specrepo-autocommit "<four-line summary>"
+```json
+{"summary":"<summary of what changed>"}
 ```
 
-The summary must contain exactly four non-empty lines.
+Before calling the tool, require `AUTOCOMMIT_PARAMS` to be set to the user's
+YAML configuration file. The Python implementation announces the resolved file
+path, passes it to `autocommit` with `--config-file`, and fails when the
+variable or file is missing. It does not select behavior based on
+`OPENCODE_API_KEY`.
+
+If the tool fails after finding the configuration file, report the displayed
+`AUTOCOMMIT_PARAMS` location so the user can update it. Refer the user to the
+[config overrides guide](https://github.com/brandon-benge/langchain_autocommit/blob/main/README.md#config-overrides)
+for configuration instructions.
 
 ## Prohibitions
 
-Do not run the hook when:
+Do not call the tool when:
 
 - Verification failed, was skipped, or could not run.
 - `@test-reviewer` returned `blocked` or `needs more tests`.

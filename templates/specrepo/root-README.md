@@ -60,4 +60,4 @@ SpecRepo procedures live in opencode skills and are granted per agent by
 | `specrepo-approval` | Proposal review and approval records. |
 | `specrepo-implementation-review` | Pre-code implementation review. |
 | `specrepo-verification` | Verification execution and evidence review. |
-| `specrepo-autocommit` | Final autocommit hook after passing test review. |
+| `specrepo-autocommit` | Final autocommit tool after passing test review. |

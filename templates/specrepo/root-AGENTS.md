@@ -93,10 +93,10 @@ When asked to implement an approved change:
 8. Delegate to `@test-reviewer`; that agent loads `specrepo-verification` to
    review coverage and verification evidence.
 9. If all required verification commands pass and `@test-reviewer` returns
-   `pass`, load `specrepo-autocommit` and run
-   `$HOME/.config/opencode/specrepo-autocommit` with a four-line summary as the
-   final command. Do not run it when verification fails, is skipped, or cannot
-   run. The hook blocks autocommit on `main`.
+   `pass`, load `specrepo-autocommit` and call the `specrepo-autocommit` custom
+   tool with a summary of what changed. Do not call it when verification fails,
+   is skipped, or cannot run. The tool blocks autocommit on `main` and requires
+   `AUTOCOMMIT_PARAMS` to point to the user's YAML configuration file.
 
 If the approved architecture is incomplete, inconsistent, or requires material
 changes during implementation, stop and return to the proposal workflow.

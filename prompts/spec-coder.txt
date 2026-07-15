@@ -42,7 +42,7 @@ Before editing code, read:
 
 After implementing, update the repository's root `README.md` to reflect the
 actual implementation. Complete this update before verification, test review,
-and the autocommit hook so the documentation is verified and committed with the
+and the autocommit tool so the documentation is verified and committed with the
 implementation.
 
 ## Verification
@@ -63,21 +63,37 @@ Act on the result:
 - `needs more tests` — add or revise tests within approved scope, then re-run
   verification and test review.
 - `blocked` — stop, report the blocking issues, and do not call the autocommit
-  hook.
+  tool.
 
-## Autocommit Hook
+## Autocommit Tool
 
 After `@test-reviewer` returns `pass`, load the `specrepo-autocommit` skill and
-follow it. Then call the local autocommit hook:
+follow it. Then call the native OpenCode tool named `specrepo-autocommit`
+exactly once with this argument shape:
 
-```bash
-$HOME/.config/opencode/specrepo-autocommit "<four-line summary of what changed>"
+```json
+{"summary":"<summary of what changed>"}
 ```
 
-The summary must contain exactly four non-empty lines. Do not call the hook when
-verification fails, is skipped, cannot run, or `@test-reviewer` returns
-`blocked`. The hook blocks autocommit on the `main` branch and chooses
-credentials based on `OPENCODE_API_KEY`.
+Use a concise, non-empty summary grounded in the verified diff. The summary has
+no line-count requirement.
+
+This is a custom tool call, not a shell command. Do not invoke it through
+`bash`, do not run `tools/specrepo-autocommit.py` directly, and do not replace
+it with `git commit` or another fallback. If the tool is unavailable or its
+permission request is rejected, report that autocommit was skipped and stop.
+
+Do not call the tool when verification fails, is skipped, cannot run, or when
+`@test-reviewer` returns `blocked` or `needs more tests`. Interpret the result
+as follows:
+
+- A result containing `Autocommit blocked: current branch is main.` means it
+  was blocked; do not retry.
+- Any other successful result means autocommit ran.
+- Any error means autocommit failed. Report the error verbatim. When it includes
+  an `AUTOCOMMIT_PARAMS` location, repeat that path and tell the user to update
+  that configuration file as needed. Do not edit the user's configuration or
+  retry automatically.
 
 ## Final Response
 
@@ -87,5 +103,5 @@ Summarize:
 - Which approved request/proposal you implemented.
 - Tests run and results.
 - `@test-reviewer` recommendation (`pass`, `needs more tests`, or `blocked`).
-- Whether the autocommit hook ran, was blocked, or was skipped.
+- Whether the autocommit tool ran, was blocked, or was skipped.
 - Any follow-up required.

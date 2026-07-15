@@ -57,7 +57,7 @@ graph TD
         TestResult{Test review result}:::decision
         FixTests[Fix tests or implementation within approved scope]:::primary
         AutocommitSkill[Load specrepo-autocommit]:::skill
-        Autocommit[Run specrepo-autocommit hook]:::primary
+        Autocommit[Call specrepo-autocommit tool]:::primary
 
         SpecCoder --> NeedImplReview
         NeedImplReview -->|No| ImplReview

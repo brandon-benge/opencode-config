@@ -89,11 +89,18 @@ Reusable agents must discover local project facts from SpecRepo:
 
 ## Configuration Files
 
-Both root configuration files are for opencode:
+The root configuration file is for opencode:
 
 | File | Role |
 | --- | --- |
 | `opencode.jsonc` | Root JSONC opencode configuration for built-in agents, SpecRepo workflow agents, permissions, skill access, and watcher behavior. |
+
+Python-backed custom tools are registered by JavaScript definitions under
+`tools/`, following opencode's global custom-tool layout.
+
+Reusable slash commands are defined under `commands/`. Run
+`/specrepo-autocommit [summary]` to ask `spec-coder` to validate the finalization
+gates and call the custom tool.
 
 `opencode.jsonc` defines the workflow agents referenced below:
 `specrepo-bootstrapper`, `request-author`, `spec-reviewer`,
@@ -141,15 +148,21 @@ prompt templates.
 | File | Purpose |
 | --- | --- |
 | `opencode.jsonc` | Root opencode config for agents, permissions, skill access, and watcher ignores. |
+| `commands/` | Reusable slash commands, including `/specrepo-autocommit`. |
 | `prompts/` | System prompt `.txt` files loaded by each agent via the `prompt: "{file:...}"` field in `opencode.jsonc`. |
 | `skills/` | Reusable opencode skills loaded on demand by specific agents. |
-| `specrepo-autocommit` | Finalization hook run by `@spec-coder` after required verification passes; blocks on `main` and chooses credentials from `OPENCODE_API_KEY` or Keychain. |
+| `tools/specrepo-autocommit.js` | Registers the `specrepo-autocommit` custom tool and invokes its Python implementation in the active worktree. |
+| `tools/specrepo-autocommit.py` | Python autocommit implementation; requires the user configuration file and blocks on `main`. |
 | `templates/specrepo/` | Reusable template pack for generating a repo-specific `specrepo/` directory. |
 
 ## Permission Notes
 
 The profiles use conservative write permissions. Agents that may need to write
 use `edit: ask` so you can approve the actual edit.
+
+The `spec-coder` profile sets the `specrepo-autocommit` custom tool to `ask`.
+After that approval, the Python implementation passes `--yes` to the CLI so it
+does not require a second, non-interactive confirmation prompt.
 
 The reusable default only allows low-risk repository inspection commands. Keep
 verification commands repository-specific: read them from SpecRepo artifacts or
@@ -162,14 +175,12 @@ tighten each profile further in `opencode.jsonc`.
 
 | Variable | Purpose |
 | --- | --- |
-| `OPENCODE_API_KEY` | Optional API key used by `specrepo-autocommit` to run `opencode -c <summary>` directly. If unset, the hook falls back to the `autocommit` CLI. |
-| `AUTOCOMMIT_PARAMS` | Optional path to a YAML parameters file read directly by the `autocommit` CLI from the environment. If unset, no config file is passed. See [example params.yaml](https://github.com/brandon-benge/langchain_autocommit/blob/main/params.yaml). |
+| `AUTOCOMMIT_PARAMS` | Required path to the YAML configuration file passed to the `autocommit` CLI with `--config-file`. The tool fails if the variable is unset or the file does not exist. See the [config overrides guide](https://github.com/brandon-benge/langchain_autocommit/blob/main/README.md#config-overrides). |
 
-To set these globally for interactive macOS `zsh` sessions, add them to
+To set it globally for interactive macOS `zsh` sessions, add it to
 `~/.zshrc`:
 
 ```bash
-export OPENCODE_API_KEY="..."
 export AUTOCOMMIT_PARAMS="$HOME/.config/opencode/params.yaml"
 ```
 
@@ -179,21 +190,20 @@ Reload the shell after editing:
 source ~/.zshrc
 ```
 
-On Windows, set them in the environment used to launch opencode. For a
+On Windows, set it in the environment used to launch opencode. For a
 persistent PowerShell user variable:
 
 ```powershell
-[Environment]::SetEnvironmentVariable("OPENCODE_API_KEY", "...", "User")
 [Environment]::SetEnvironmentVariable("AUTOCOMMIT_PARAMS", "$env:USERPROFILE\.config\opencode\params.yaml", "User")
 ```
 
 Open a new terminal after setting persistent Windows variables.
 
-These locations are only the global defaults. You can set the variables any
+These locations are only the global defaults. You can set the variable any
 other way that fits your environment, such as inline for one command, through a
 terminal profile, direnv, CI secrets, or a process manager.
 
-If `OPENCODE_API_KEY` is not set, `specrepo-autocommit` uses the
-`autocommit` CLI path. That CLI can fetch credentials from Keychain depending
-on its own configuration; read the `autocommit` README and point this repo at
-the desired config by setting `AUTOCOMMIT_PARAMS` to that YAML file path.
+`specrepo-autocommit` does not inspect `OPENCODE_API_KEY`; credential selection
+belongs to the `autocommit` configuration. On failure, the tool prints the
+resolved `AUTOCOMMIT_PARAMS` location and the configuration guide so the user
+can update the file as needed.

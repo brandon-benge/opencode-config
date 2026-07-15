@@ -249,8 +249,9 @@ Human gate:
   `@test-reviewer` recommendation. If the result was `needs more tests`,
   re-run `@spec-coder` to fix; the chain re-invokes `@test-reviewer`
   automatically in a retry loop (fix → verify → review).
-- The autocommit hook is a plain `git commit`. It runs only after tests pass
-  and `@test-reviewer` returns `pass`. It performs no verification of its own.
+- The autocommit tool runs the `autocommit` CLI with the YAML file named by
+  `AUTOCOMMIT_PARAMS`. It runs only after tests pass and `@test-reviewer`
+  returns `pass`; it performs no verification of its own.
 - You never need to call `@spec-reviewer`, `@architecture-approver`,
   `@implementation-reviewer`, or `@test-reviewer` directly. Call only the
   primary agents (`@request-author`, `@spec-coder`) and let the chain handle

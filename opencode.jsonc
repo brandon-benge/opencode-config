@@ -11,9 +11,9 @@
     "plan": {
       "temperature": 0.1,
       "steps": 3,
-      "tools": {
-        "write": false,
-        "edit": false
+      "permission": {
+        "write": "deny",
+        "edit": "deny"
       }
     },
 
@@ -34,6 +34,9 @@
         "grep": "allow",
         "list": "allow",
         "lsp": "allow",
+        "question": "allow",
+        "todowrite": "allow",
+        "specrepo-autocommit": "deny",
         "bash": {
           "*": "ask",
           "pwd": "allow",
@@ -77,6 +80,9 @@
         "grep": "allow",
         "list": "allow",
         "lsp": "allow",
+        "question": "allow",
+        "todowrite": "allow",
+        "specrepo-autocommit": "deny",
         "bash": {
           "*": "ask",
           "pwd": "allow",
@@ -125,6 +131,9 @@
         "grep": "allow",
         "list": "allow",
         "lsp": "allow",
+        "question": "allow",
+        "todowrite": "allow",
+        "specrepo-autocommit": "deny",
         "bash": {
           "*": "ask",
           "pwd": "allow",
@@ -172,6 +181,9 @@
         "grep": "allow",
         "list": "allow",
         "lsp": "allow",
+        "question": "allow",
+        "todowrite": "allow",
+        "specrepo-autocommit": "deny",
         "bash": {
           "*": "ask",
           "pwd": "allow",
@@ -216,6 +228,9 @@
         "grep": "allow",
         "list": "allow",
         "lsp": "allow",
+        "question": "allow",
+        "todowrite": "allow",
+        "specrepo-autocommit": "deny",
         "bash": {
           "*": "ask",
           "pwd": "allow",
@@ -263,6 +278,8 @@
         "grep": "allow",
         "list": "allow",
         "lsp": "allow",
+        "question": "allow",
+        "todowrite": "allow",
         "bash": {
           "*": "ask",
           "pwd": "allow",
@@ -281,13 +298,13 @@
           "git rev-parse*": "allow",
           "git branch --show-current": "allow",
           "git branch --list*": "allow",
-          "$HOME/.config/opencode/specrepo-autocommit *": "ask",
           "rg *": "allow",
           "sed -n *": "allow",
           "wc *": "allow"
         },
         "webfetch": "deny",
         "websearch": "deny",
+        "specrepo-autocommit": "allow",
         "skill": {
           "specrepo-implementation-review": "allow",
           "specrepo-verification": "allow",
@@ -314,6 +331,9 @@
         "grep": "allow",
         "list": "allow",
         "lsp": "allow",
+        "question": "deny",
+        "todowrite": "allow",
+        "specrepo-autocommit": "deny",
         "bash": {
           "*": "ask",
           "pwd": "allow",
