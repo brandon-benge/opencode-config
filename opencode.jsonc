@@ -10,7 +10,7 @@
   "agent": {
     "plan": {
       "temperature": 0.1,
-      "steps": 3,
+      "steps": 6,
       "permission": {
         "write": "deny",
         "edit": "deny"
@@ -19,7 +19,7 @@
 
     "build": {
       "temperature": 0.1,
-      "steps": 10
+      "steps": 20
     },
 
     "specrepo-bootstrapper": {
